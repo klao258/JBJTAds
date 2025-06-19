@@ -53,3 +53,28 @@ exports.getUsers = async ctx => {
     ctx.body = { code: 1, message: '查询失败', error: err.message };
   }
 };
+
+// 根据用户id批量获取用户列表
+exports.getUserBatch = async ctx => {
+  const { users } = ctx.request.body;
+
+  if (!Array.isArray(users) || users.length === 0) {
+    ctx.body = { code: 400, message: '参数 users 必须是非空数组' };
+    return;
+  }
+
+  try {
+    // 构建查询条件
+    const queryConditions = users.map(item => ({
+      platform: item.platform,
+      ucode: item.ucode
+    }));
+
+    // 执行批量查询
+    const result = await User.find({ $or: queryConditions }).lean();
+
+    ctx.body = { code: 0, data: result};
+  } catch (error) {
+    ctx.body = { code: 1, message: '查询失败', error: error.message };
+  }
+}
