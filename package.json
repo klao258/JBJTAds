@@ -1,0 +1,17 @@
+{
+  "name": "jbjtads",
+  "version": "1.0.0",
+  "description": "JBJTAds project with koa2 and mongoose",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "@koa/cors": "^5.0.0",
+    "dotenv": "^16.5.0",
+    "koa": "^2.14.2",
+    "koa-bodyparser": "^4.3.0",
+    "koa-router": "^10.1.1",
+    "mongoose": "^7.5.0"
+  }
+}
