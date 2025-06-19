@@ -21,7 +21,7 @@ pipeline {
         stage('安装依赖') {
             steps {
                 echo '📦 安装依赖...'
-                sh 'sudo npm run install'
+                sh 'sudo npm install'
             }
         }
 
