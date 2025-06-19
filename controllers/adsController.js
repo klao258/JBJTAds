@@ -3,7 +3,14 @@ const AdsCpmLog = require('../models/adsCpmLog');
 const AdsDailyView = require('../models/adsDailyView');
 
 // 获取当前北京时间
-const getNow = () => (new Date()?.toLocaleString?.('zh-CN', { timeZone: 'Asia/Shanghai' }))?.replace(/\//g, '-')
+const getNow = () => {
+  const raw = new Date().toLocaleString('zh-CN', { timeZone: 'Asia/Shanghai' });
+  const [datePart, timePart] = raw.split(' ');
+  const [year, month, day] = datePart.split('/').map(s => s.padStart(2, '0'));
+  const [hour, minute, second] = timePart.split(':').map(s => s.padStart(2, '0'));
+
+  return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+};
 
 // 同步广告信息
 exports.syncAds = async ctx => {
