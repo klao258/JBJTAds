@@ -1,12 +1,12 @@
 require("dotenv").config()
 const Koa = require('koa');
-const cors = require('@koa/cors');
+// const cors = require('@koa/cors');
 const bodyParser = require('koa-bodyparser');
 const userRoutes = require('./routes/user');
 const adsRoutes = require('./routes/ads');
 require('./models/db'); // mongoose连接
 
-const app = new Koa();
+// const app = new Koa();
 
 app.use(cors()); // 允许所有来源跨域
 
