@@ -64,27 +64,6 @@ exports.syncUser = async ctx => {
   }
 };
 
-// 获取用户列表
-exports.getUsers = async ctx => {
-  const { ads, platform } = ctx.query;
-  const query = {};
-
-  if (ads) {
-    query.ads = { $regex: ads, $options: 'i' }; // 支持模糊匹配（不区分大小写）
-  }
-
-  if (platform) {
-    query.platform = platform;
-  }
-
-  try {
-    const users = await User.find(query).lean();
-    ctx.body = { code: 0, data: users };
-  } catch (err) {
-    ctx.body = { code: 1, message: '查询失败', error: err.message };
-  }
-};
-
 // 根据用户id批量获取用户列表
 exports.getUserBatch = async ctx => {
   const { users } = ctx.request.body;
@@ -109,3 +88,24 @@ exports.getUserBatch = async ctx => {
     ctx.body = { code: 1, message: '查询失败', error: error.message };
   }
 }
+
+// 获取用户列表
+exports.getAccoutPost = async ctx => {
+  const { ads, platform } = ctx.query;
+  const query = {};
+
+  if (ads) {
+    query.ads = { $regex: ads, $options: 'i' }; // 支持模糊匹配（不区分大小写）
+  }
+
+  if (platform) {
+    query.platform = platform;
+  }
+
+  try {
+    const users = await User.find(query).lean();
+    ctx.body = { code: 0, data: users };
+  } catch (err) {
+    ctx.body = { code: 1, message: '查询失败', error: err.message };
+  }
+};
