@@ -6,9 +6,9 @@ const userRoutes = require('./routes/user');
 const adsRoutes = require('./routes/ads');
 require('./models/db'); // mongoose连接
 
-// const app = new Koa();
+const app = new Koa();
 
-app.use(cors()); // 允许所有来源跨域
+// app.use(cors()); // 允许所有来源跨域
 
 app.use(bodyParser());
 
