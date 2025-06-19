@@ -25,7 +25,7 @@ exports.syncUser = async ctx => {
   // 校验每一项参数
   for (const user of users) {
     const { tgcode, tgname, ucode, uname, upcode, upname, amount, ads, platform, createDate } = user;
-    if (!tgcode || !upname || !ucode || !upcode || !ads || !platform || !createDate) {
+    if (!tgcode || !ucode || !upcode || !ads || !platform || !createDate) {
       ctx.body = { code: 1, message: '部分用户参数缺失', data: user };
       return;
     }
