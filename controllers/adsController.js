@@ -32,16 +32,24 @@ exports.syncAds = async ctx => {
   ctx.body = { code: 0, message: '广告同步成功' };
 };
 
-// 获取广告列表
+// 记录CPM变动
 exports.recordCpmChange = async ctx => {
-  const { ads, createDate, cpm, float, views, clicks, joins } = ctx.request.body;
-  if (!ads || !createDate || cpm === undefined || float === undefined || views === undefined || clicks === undefined || joins === undefined) {
-    ctx.body = { code: 1, message: '参数缺失' };
-    return;
+  try {
+    const { ads, cpm, float, views, clicks, joins } = ctx.request.body;
+    if (!ads || cpm === undefined || float === undefined || views === undefined || clicks === undefined || joins === undefined) {
+      ctx.body = { code: 1, message: '参数缺失' };
+      return;
+    }
+
+    const now = getNow();
+
+    const log = new AdsCpmLog({ ads, cpm, float, views, clicks, joins, createDate: now });
+    await log.save();
+    ctx.body = { code: 0, message: 'CPM变动记录成功' };
+  } catch (error) {
+    ctx.body = { code: 1, message: 'CPM变动记录失败' };
   }
-  const log = new AdsCpmLog({ ads, createDate, cpm, float, views, clicks, joins });
-  await log.save();
-  ctx.body = { code: 0, message: 'CPM变动记录成功' };
+  
 };
 
 // 获取CPM变动记录
