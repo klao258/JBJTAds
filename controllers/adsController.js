@@ -203,18 +203,18 @@ exports.getAdsDailyStats = async ctx => {
     if (!resultMap[ads]) {
       resultMap[ads] = {
         ads,
-        tobj: { views: 0, clicks: 0, joins: 0, budget: 0 },
-        yobj: { views: 0, clicks: 0, joins: 0, budget: 0 },
-        qobj: { views: 0, clicks: 0, joins: 0, budget: 0 }
+        [today]: { views: 0, clicks: 0, joins: 0, budget: 0 },
+        [yesterday]: { views: 0, clicks: 0, joins: 0, budget: 0 },
+        [beforeYesterday]: { views: 0, clicks: 0, joins: 0, budget: 0 }
       };
     }
 
     if (createDate === today) {
-      resultMap[ads].tobj = { views, clicks, joins, budget };
+      resultMap[ads][today] = { views, clicks, joins, budget };
     } else if (createDate === yesterday) {
-      resultMap[ads].yobj = { views, clicks, joins, budget };
+      resultMap[ads][yesterday] = { views, clicks, joins, budget };
     } else if (createDate === beforeYesterday) {
-      resultMap[ads].qobj = { views, clicks, joins, budget };
+      resultMap[ads][beforeYesterday] = { views, clicks, joins, budget };
     }
   }
 
