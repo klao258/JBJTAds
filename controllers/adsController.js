@@ -12,6 +12,24 @@ const getNow = () => {
   return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
 };
 
+// 获取指定偏移天数的日期字符串, offset正数过去的日期，负数表示未来的日期
+const getDateStr = offset => {
+  const now = new Date();
+
+  // 计算北京时间偏移
+  const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+  const beijingTime = new Date(utc + 8 * 60 * 60000);
+
+  // 调整日期
+  beijingTime.setDate(beijingTime.getDate() - offset);
+
+  const year = beijingTime.getFullYear();
+  const month = String(beijingTime.getMonth() + 1).padStart(2, '0');
+  const day = String(beijingTime.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+
 // 同步广告信息
 exports.syncAds = async ctx => {
   const { list } = ctx.request.body;
@@ -155,5 +173,54 @@ exports.recordDailyViews = async ctx => {
     code: errors.length ? 1 : 0,
     message: errors.length ? '部分数据保存失败' : '曝光量记录成功',
     errors,
+  };
+};
+
+// 获取近三日的浏览数据
+exports.getAdsDailyStats = async ctx => {
+  const { ads } = ctx.query;
+
+  if (!ads) {
+    ctx.body = { code: 1, message: '参数缺失：ads' };
+    return;
+  }
+
+  const today = getDateStr(0);
+  const yesterday = getDateStr(1);
+  const beforeYesterday = getDateStr(2);
+  const targetDates = [today, yesterday, beforeYesterday];
+
+  const records = await AdsDailyView.find({
+    ads: { $regex: ads, $options: 'i' },
+    createDate: { $in: targetDates }
+  }).lean();
+
+  const resultMap = {};
+
+  for (const record of records) {
+    const { ads, createDate, views = 0, clicks = 0, joins = 0, budget = 0 } = record;
+
+    if (!resultMap[ads]) {
+      resultMap[ads] = {
+        ads,
+        tobj: { views: 0, clicks: 0, joins: 0, budget: 0 },
+        yobj: { views: 0, clicks: 0, joins: 0, budget: 0 },
+        qobj: { views: 0, clicks: 0, joins: 0, budget: 0 }
+      };
+    }
+
+    if (createDate === today) {
+      resultMap[ads].tobj = { views, clicks, joins, budget };
+    } else if (createDate === yesterday) {
+      resultMap[ads].yobj = { views, clicks, joins, budget };
+    } else if (createDate === beforeYesterday) {
+      resultMap[ads].qobj = { views, clicks, joins, budget };
+    }
+  }
+
+  ctx.body = {
+    code: 0,
+    message: '获取成功',
+    data: Object.values(resultMap)
   };
 };
