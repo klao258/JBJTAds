@@ -91,7 +91,7 @@ exports.recordCpmChange = async ctx => {
   
 };
 
-// 按天记录浏览量
+// 按天记录浏览量（已实现）
 exports.recordDailyViews = async ctx => {
   const { list } = ctx.request.body;
 
