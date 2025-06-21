@@ -63,12 +63,29 @@ exports.getCpmChanges = async ctx => {
     ctx.body = { code: 1, message: 'ads参数缺失' };
     return;
   }
+
   const query = { ads };
   if (startDate) query.createDate = { $gte: startDate };
   if (endDate) query.createDate = Object.assign(query.createDate || {}, { $lte: endDate });
 
-  const logs = await AdsCpmLog.find(query).sort({ createDate: -1 }).lean();
-  ctx.body = { code: 0, data: logs };
+  try {
+    // 先删除15天前的旧数据
+    const cutoffDate = new Date();
+    cutoffDate.setDate(cutoffDate.getDate() - 15);
+    const cutoffStr = cutoffDate.toISOString().slice(0, 10); // YYYY-MM-DD 格式
+
+    await AdsCpmLog.deleteMany({
+      ads,
+      createDate: { $lt: cutoffStr }
+    });
+
+    // 获取15天内的数据
+    const logs = await AdsCpmLog.find(query).sort({ createDate: -1 }).lean();
+
+    ctx.body = { code: 0, data: logs };
+  } catch (err) {
+    ctx.body = { code: 1, message: `获取或清理 CPM 数据失败: ${err.message}` };
+  }
 };
 
 // 记录CPM变动（已实现）
@@ -139,19 +156,4 @@ exports.recordDailyViews = async ctx => {
     message: errors.length ? '部分数据保存失败' : '曝光量记录成功',
     errors,
   };
-};
-
-// 获取广告日曝光量
-exports.getDailyViews = async ctx => {
-  const { ads, startDate, endDate } = ctx.query;
-  if (!ads) {
-    ctx.body = { code: 1, message: 'ads参数缺失' };
-    return;
-  }
-  const query = { ads };
-  if (startDate) query.createDate = { $gte: startDate };
-  if (endDate) query.createDate = Object.assign(query.createDate || {}, { $lte: endDate });
-
-  const views = await AdsDailyView.find(query).sort({ createDate: -1 }).lean();
-  ctx.body = { code: 0, data: views };
 };
