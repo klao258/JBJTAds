@@ -116,7 +116,7 @@ exports.recordDailyViews = async ctx => {
       // 如果已存在，则覆盖；否则新增（即 upsert）
       await AdsDailyView.updateOne(
         { ads, createDate },
-        { $set: { views, clicks, joins, budget } },
+        { $set: { views, clicks, joins, budget, updateDate: getNow()  } },
         { upsert: true }
       );
     } catch (err) {
