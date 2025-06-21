@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const AdsPostSchema = new mongoose.Schema({
   ads: { type: String, required: true, unique: true },
   title: { type: String, required: true },
+  createDate: { type: String, required: true },
 });
 
 module.exports = mongoose.model('AdsPost', AdsPostSchema);

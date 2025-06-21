@@ -14,25 +14,64 @@ const getNow = () => {
 
 // 同步广告信息
 exports.syncAds = async ctx => {
-  const { ads, title } = ctx.request.body;
-  if (!ads || !title) {
-    ctx.body = { code: 1, message: '参数缺失' };
+  const { list } = ctx.request.body;
+
+  // 验证传入参数是否为数组且非空
+  if (!Array.isArray(list) || list.length === 0) {
+    ctx.body = { code: 1, message: '参数缺失或格式错误，list 应为非空数组' };
     return;
   }
+
   const now = getNow();
-  let post = await AdsPost.findOne({ ads });
-  if (post) {
-    post.title = title;
-    post.createDate = now;
-    await post.save();
-  } else {
-    post = new AdsPost({ ads, title, createDate: now });
-    await post.save();
+  const errors = [];
+
+  for (const item of list) {
+    const { ads, title } = item || {};
+
+    // 校验每一项的结构
+    if (!ads || !title) {
+      errors.push({ ads, message: 'ads 或 title 缺失' });
+      continue;
+    }
+
+    try {
+      let post = await AdsPost.findOne({ ads });
+      if (post) {
+        post.title = title;
+        post.createDate = now;
+        await post.save();
+      } else {
+        post = new AdsPost({ ads, title, createDate: now });
+        await post.save();
+      }
+    } catch (err) {
+      errors.push({ ads, message: `保存失败：${err.message}` });
+    }
   }
-  ctx.body = { code: 0, message: '广告同步成功' };
+
+  ctx.body = {
+    code: errors.length ? 1 : 0,
+    message: errors.length ? '部分广告同步失败' : '广告同步成功',
+    errors,
+  };
 };
 
-// 记录CPM变动
+// 获取CPM变动记录（已实现）
+exports.getCpmChanges = async ctx => {
+  const { ads, startDate, endDate } = ctx.query;
+  if (!ads) {
+    ctx.body = { code: 1, message: 'ads参数缺失' };
+    return;
+  }
+  const query = { ads };
+  if (startDate) query.createDate = { $gte: startDate };
+  if (endDate) query.createDate = Object.assign(query.createDate || {}, { $lte: endDate });
+
+  const logs = await AdsCpmLog.find(query).sort({ createDate: -1 }).lean();
+  ctx.body = { code: 0, data: logs };
+};
+
+// 记录CPM变动（已实现）
 exports.recordCpmChange = async ctx => {
   try {
     const { ads, cpm, float, views, clicks, joins } = ctx.request.body;
@@ -50,21 +89,6 @@ exports.recordCpmChange = async ctx => {
     ctx.body = { code: 1, message: 'CPM变动记录失败' };
   }
   
-};
-
-// 获取CPM变动记录
-exports.getCpmChanges = async ctx => {
-  const { ads, startDate, endDate } = ctx.query;
-  if (!ads) {
-    ctx.body = { code: 1, message: 'ads参数缺失' };
-    return;
-  }
-  const query = { ads };
-  if (startDate) query.createDate = { $gte: startDate };
-  if (endDate) query.createDate = Object.assign(query.createDate || {}, { $lte: endDate });
-
-  const logs = await AdsCpmLog.find(query).sort({ createDate: -1 }).lean();
-  ctx.body = { code: 0, data: logs };
 };
 
 // 获取广告列表

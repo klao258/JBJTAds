@@ -11,7 +11,7 @@ const getNow = () => {
   return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
 };
 
-// 批量同步用户信息
+// 批量同步用户信息（已实现）
 exports.syncUser = async ctx => {
   const { users } = ctx.request.body;
 
@@ -64,7 +64,7 @@ exports.syncUser = async ctx => {
   }
 };
 
-// 根据用户id批量获取用户列表
+// 根据用户id批量获取用户列表（已实现）
 exports.getUserBatch = async ctx => {
   const { users } = ctx.request.body;
 
@@ -89,8 +89,7 @@ exports.getUserBatch = async ctx => {
   }
 }
 
-
-// 获取广告统计信息
+// 获取广告统计信息（已实现）
 exports.getAccoutPost = async ctx => {
   const { ads, platform } = ctx.query;
   const match = {};
