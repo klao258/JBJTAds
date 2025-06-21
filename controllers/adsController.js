@@ -109,15 +109,15 @@ exports.getCpmChanges = async ctx => {
 // 记录CPM变动（已实现）
 exports.recordCpmChange = async ctx => {
   try {
-    const { ads, cpm, float, views, clicks, joins } = ctx.request.body;
-    if (!ads || cpm === undefined || float === undefined || views === undefined || clicks === undefined || joins === undefined) {
+    const { ads, cpm, float, views, clicks, actions } = ctx.request.body;
+    if (!ads || cpm === undefined || float === undefined || views === undefined || clicks === undefined || actions === undefined) {
       ctx.body = { code: 1, message: '参数缺失' };
       return;
     }
 
     const now = getNow();
 
-    const log = new AdsCpmLog({ ads, cpm, float, views, clicks, joins, createDate: now });
+    const log = new AdsCpmLog({ ads, cpm, float, views, clicks, actions, createDate: now });
     await log.save();
     ctx.body = { code: 0, message: 'CPM变动记录成功' };
   } catch (error) {

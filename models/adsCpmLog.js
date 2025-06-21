@@ -8,7 +8,7 @@ const AdsCpmLogSchema = new mongoose.Schema({
   float: { type: Number, required: true },
   views: { type: Number, required: true },
   clicks: { type: Number, required: true },
-  joins: { type: Number, required: true }
+  actions: { type: Number, required: true }
 });
 
 AdsCpmLogSchema.index({ ads: 1, createDate: 1 });
