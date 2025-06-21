@@ -139,10 +139,10 @@ exports.recordDailyViews = async ctx => {
   const errors = [];
 
   for (const item of list) {
-    const { ads, views, clicks, joins, budget } = item || {};
+    const { ads, views, clicks, joins, spent } = item || {};
 
     // 字段校验
-    if (!ads || typeof views !== 'number' || typeof clicks !== 'number' || typeof joins !== 'number' || typeof budget !== 'number') {
+    if (!ads || typeof views !== 'number' || typeof clicks !== 'number' || typeof joins !== 'number' || typeof spent !== 'number') {
       errors.push({ ads, message: '字段缺失或格式错误（应为数字）' });
       continue;
     }
@@ -151,7 +151,7 @@ exports.recordDailyViews = async ctx => {
       // 写入或更新当日数据
       await AdsDailyView.updateOne(
         { ads, createDate },
-        { $set: { views, clicks, joins, budget, updateDate: getNow() } },
+        { $set: { views, clicks, joins, spent, updateDate: getNow() } },
         { upsert: true }
       );
 
@@ -198,23 +198,23 @@ exports.getAdsDailyStats = async ctx => {
   const resultMap = {};
 
   for (const record of records) {
-    const { ads, createDate, views = 0, clicks = 0, joins = 0, budget = 0 } = record;
+    const { ads, createDate, views = 0, clicks = 0, joins = 0, spent = 0 } = record;
 
     if (!resultMap[ads]) {
       resultMap[ads] = {
         ads,
-        [today]: { views: 0, clicks: 0, joins: 0, budget: 0 },
-        [yesterday]: { views: 0, clicks: 0, joins: 0, budget: 0 },
-        [beforeYesterday]: { views: 0, clicks: 0, joins: 0, budget: 0 }
+        [today]: { views: 0, clicks: 0, joins: 0, spent: 0 },
+        [yesterday]: { views: 0, clicks: 0, joins: 0, spent: 0 },
+        [beforeYesterday]: { views: 0, clicks: 0, joins: 0, spent: 0 }
       };
     }
 
     if (createDate === today) {
-      resultMap[ads][today] = { views, clicks, joins, budget };
+      resultMap[ads][today] = { views, clicks, joins, spent };
     } else if (createDate === yesterday) {
-      resultMap[ads][yesterday] = { views, clicks, joins, budget };
+      resultMap[ads][yesterday] = { views, clicks, joins, spent };
     } else if (createDate === beforeYesterday) {
-      resultMap[ads][beforeYesterday] = { views, clicks, joins, budget };
+      resultMap[ads][beforeYesterday] = { views, clicks, joins, spent };
     }
   }
 

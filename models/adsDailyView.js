@@ -7,7 +7,7 @@ const AdsDailyViewSchema = new mongoose.Schema({
   views: { type: Number, required: true },
   clicks: { type: Number, required: true },
   joins: { type: Number, required: true },
-  budget: { type: Number, required: true },
+  spent: { type: Number, required: true },
   updateDate: { type: String, required: true },
 });
 
