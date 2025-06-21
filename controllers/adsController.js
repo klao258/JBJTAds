@@ -100,25 +100,35 @@ exports.recordDailyViews = async ctx => {
     return;
   }
 
-  const createDate = getNow()?.slice?.(0, 10); // 获取当前日期，格式为 YYYY-MM-DD
+  const createDate = getNow()?.slice?.(0, 10); // 当前日期 YYYY-MM-DD
   const errors = [];
 
   for (const item of list) {
-    const { ads, views, clicks, joins } = item || {};
+    const { ads, views, clicks, joins, budget } = item || {};
 
-    // 验证字段存在且格式正确
-    if ( !ads || typeof views !== 'number' || typeof clicks !== 'number' || typeof joins !== 'number', typeof budget !== 'number') {
+    // 字段校验
+    if (!ads || typeof views !== 'number' || typeof clicks !== 'number' || typeof joins !== 'number' || typeof budget !== 'number') {
       errors.push({ ads, message: '字段缺失或格式错误（应为数字）' });
       continue;
     }
 
     try {
-      // 如果已存在，则覆盖；否则新增（即 upsert）
+      // 写入或更新当日数据
       await AdsDailyView.updateOne(
         { ads, createDate },
-        { $set: { views, clicks, joins, budget, updateDate: getNow()  } },
+        { $set: { views, clicks, joins, budget, updateDate: getNow() } },
         { upsert: true }
       );
+
+      // 删除15天之前的数据
+      const cutoffDate = new Date();
+      cutoffDate.setDate(cutoffDate.getDate() - 15);
+      const cutoffStr = cutoffDate.toISOString().slice(0, 10); // YYYY-MM-DD
+
+      await AdsDailyView.deleteMany({
+        ads,
+        createDate: { $lt: cutoffStr },
+      });
     } catch (err) {
       errors.push({ ads, message: `数据库操作失败：${err.message}` });
     }
