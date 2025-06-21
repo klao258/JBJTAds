@@ -6,7 +6,8 @@ const AdsDailyViewSchema = new mongoose.Schema({
   ads: { type: String, required: true },
   views: { type: Number, required: true },
   clicks: { type: Number, required: true },
-  joins: { type: Number, required: true }
+  joins: { type: Number, required: true },
+  budget: { type: Number, required: true },
 });
 
 AdsDailyViewSchema.index({ ads: 1, createDate: 1 }, { unique: true });

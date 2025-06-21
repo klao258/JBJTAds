@@ -107,7 +107,7 @@ exports.recordDailyViews = async ctx => {
     const { ads, views, clicks, joins } = item || {};
 
     // 验证字段存在且格式正确
-    if ( !ads || typeof views !== 'number' || typeof clicks !== 'number' || typeof joins !== 'number' ) {
+    if ( !ads || typeof views !== 'number' || typeof clicks !== 'number' || typeof joins !== 'number', typeof budget !== 'number') {
       errors.push({ ads, message: '字段缺失或格式错误（应为数字）' });
       continue;
     }
@@ -116,7 +116,7 @@ exports.recordDailyViews = async ctx => {
       // 如果已存在，则覆盖；否则新增（即 upsert）
       await AdsDailyView.updateOne(
         { ads, createDate },
-        { $set: { views, clicks, joins } },
+        { $set: { views, clicks, joins, budget } },
         { upsert: true }
       );
     } catch (err) {
