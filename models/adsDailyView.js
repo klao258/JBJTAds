@@ -2,9 +2,8 @@ const mongoose = require('mongoose');
 
 // 广告每日数据视图模型
 const AdsDailyViewSchema = new mongoose.Schema({
-  ads: { type: String, required: true },
   createDate: { type: String, required: true },
-  cpm: { type: Number, required: true },
+  ads: { type: String, required: true },
   views: { type: Number, required: true },
   clicks: { type: Number, required: true },
   joins: { type: Number, required: true }

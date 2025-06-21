@@ -91,20 +91,44 @@ exports.recordCpmChange = async ctx => {
   
 };
 
-// 获取广告列表
-exports.recordDailyView = async ctx => {
-  const { ads, createDate, cpm, views, clicks, joins } = ctx.request.body;
-  if (!ads || !createDate || cpm === undefined || views === undefined || clicks === undefined || joins === undefined) {
-    ctx.body = { code: 1, message: '参数缺失' };
+// 按天记录浏览量
+exports.recordDailyViews = async ctx => {
+  const { list } = ctx.request.body;
+
+  if (!Array.isArray(list) || list.length === 0) {
+    ctx.body = { code: 1, message: '参数缺失或格式错误，list 应为非空数组' };
     return;
   }
-  // upsert
-  await AdsDailyView.updateOne(
-    { ads, createDate },
-    { $set: { cpm, views, clicks, joins } },
-    { upsert: true }
-  );
-  ctx.body = { code: 0, message: '曝光量记录成功' };
+
+  const createDate = getNow()?.slice?.(0, 10); // 获取当前日期，格式为 YYYY-MM-DD
+  const errors = [];
+
+  for (const item of list) {
+    const { ads, views, clicks, joins } = item || {};
+
+    // 验证字段存在且格式正确
+    if ( !ads || typeof views !== 'number' || typeof clicks !== 'number' || typeof joins !== 'number' ) {
+      errors.push({ ads, message: '字段缺失或格式错误（应为数字）' });
+      continue;
+    }
+
+    try {
+      // 如果已存在，则覆盖；否则新增（即 upsert）
+      await AdsDailyView.updateOne(
+        { ads, createDate },
+        { $set: { views, clicks, joins } },
+        { upsert: true }
+      );
+    } catch (err) {
+      errors.push({ ads, message: `数据库操作失败：${err.message}` });
+    }
+  }
+
+  ctx.body = {
+    code: errors.length ? 1 : 0,
+    message: errors.length ? '部分数据保存失败' : '曝光量记录成功',
+    errors,
+  };
 };
 
 // 获取广告日曝光量
