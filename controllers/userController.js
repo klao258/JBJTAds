@@ -149,12 +149,11 @@ exports.getUserStatsByPlatformAndUpcode = async (ctx) => {
           totalAmount: { $sum: '$amount' },
           users: {
             $push: {
-              ads: '$ads',
+              tgname: '$tgname',
+              tgcode: '$tgcode',
               uname: '$uname',
               ucode: '$ucode',
               amount: '$amount',
-              tgname: '$tgname',
-              tgcode: '$tgcode',
               createDate: '$createDate',
               updateDate: '$updateDate'
             }
@@ -171,8 +170,17 @@ exports.getUserStatsByPlatformAndUpcode = async (ctx) => {
           users: 1
         }
       },
-      { $sort: { platform: 1, upcode: 1 } }
+      {
+        $sort: {
+          platform: 1 // ✅ 只按平台升序排列
+        }
+      }
     ]);
+
+    // ✅ 对每组 users 按 amount 倒序排列
+    result.forEach(group => {
+      group.users.sort((a, b) => b.amount - a.amount);
+    });
 
     ctx.body = { code: 0, data: result };
   } catch (err) {
