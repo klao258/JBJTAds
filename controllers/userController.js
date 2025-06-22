@@ -136,25 +136,29 @@ exports.getAccoutPost = async ctx => {
 };
 
 // 统计所有上级用户的注册数量和累计金额（已实现）
-exports.getUserStatsByUpcode = async (ctx) => {
+exports.getUserStatsByPlatformAndUpcode = async (ctx) => {
   try {
     const result = await User.aggregate([
       {
         $group: {
-          _id: '$upcode',              // 按上级ID分组
-          count: { $sum: 1 },          // 统计数量
-          totalAmount: { $sum: '$amount' } // 累计金额
+          _id: {
+            platform: '$platform',
+            upcode: '$upcode'
+          },
+          count: { $sum: 1 },
+          totalAmount: { $sum: '$amount' }
         }
       },
       {
         $project: {
           _id: 0,
-          upcode: '$_id',
+          platform: '$_id.platform',
+          upcode: '$_id.upcode',
           count: 1,
           totalAmount: 1
         }
       },
-      { $sort: { count: -1 } } // 可选，按数量降序排列
+      { $sort: { platform: 1, upcode: 1 } } // 先按平台，再按上级ID排序
     ]);
 
     ctx.body = { code: 0, data: result };
