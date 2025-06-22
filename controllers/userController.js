@@ -146,7 +146,18 @@ exports.getUserStatsByPlatformAndUpcode = async (ctx) => {
             upcode: '$upcode'
           },
           count: { $sum: 1 },
-          totalAmount: { $sum: '$amount' }
+          totalAmount: { $sum: '$amount' },
+          users: {
+            $push: {
+              tgname: '$tgname',
+              tgcode: '$tgcode',
+              uname: '$uname',
+              ucode: '$ucode',
+              amount: '$amount',
+              createDate: '$createDate',
+              updateDate: '$updateDate'
+            }
+          }
         }
       },
       {
@@ -155,10 +166,11 @@ exports.getUserStatsByPlatformAndUpcode = async (ctx) => {
           platform: '$_id.platform',
           upcode: '$_id.upcode',
           count: 1,
-          totalAmount: 1
+          totalAmount: 1,
+          users: 1
         }
       },
-      { $sort: { platform: 1, upcode: 1 } } // 先按平台，再按上级ID排序
+      { $sort: { platform: 1, upcode: 1 } }
     ]);
 
     ctx.body = { code: 0, data: result };
