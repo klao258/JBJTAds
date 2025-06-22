@@ -149,11 +149,12 @@ exports.getUserStatsByPlatformAndUpcode = async (ctx) => {
           totalAmount: { $sum: '$amount' },
           users: {
             $push: {
-              tgname: '$tgname',
-              tgcode: '$tgcode',
+              ads: '$ads',
               uname: '$uname',
               ucode: '$ucode',
               amount: '$amount',
+              tgname: '$tgname',
+              tgcode: '$tgcode',
               createDate: '$createDate',
               updateDate: '$updateDate'
             }
