@@ -33,7 +33,6 @@ const getDateStr = offset => {
   return `${year}-${month}-${day}`;
 };
 
-
 // 同步广告信息
 exports.syncAds = async ctx => {
   const { ads } = ctx.query;
