@@ -312,32 +312,32 @@ exports.getAdsUEN = async ctx => {
     }
   }
 
-  // 处理分组结果，计算英文占比并匹配广告标题
-  const entries = Object.values(adsMap);
+  const adsKeys = Object.keys(adsMap);
+
+  // 批量查询 AdsPost 中的有效 ads 列表（防止多次 await）
+  const adsPosts = await AdsPost.find({ ads: { $in: adsKeys } }).lean();
+  const adsTitleMap = {};
+  for (const post of adsPosts) {
+    adsTitleMap[post.ads] = post.title || '（无标题）';
+  }
 
   const result = [];
 
-  for (const item of entries) {
+  for (const item of Object.values(adsMap)) {
     const scale = item.total === 0 ? 0 : (item.enCount / item.total) * 100;
 
-    // 英文占比小于 20%，跳过
-    if (scale < 20) continue;
-
-    // 匹配 AdsPost 表，获取广告标题
-    const adsPost = await AdsPost.findOne({ ads: item.ads }).lean();
-
-    // 没找到说明已删除，跳过
-    if (!adsPost) continue;
+    // 样本小于20，或英文占比不足，或没有广告记录，都跳过
+    if (item.total < 20 || scale < 20 || !adsTitleMap[item.ads]) continue;
 
     result.push({
       ads: item.ads,
-      title: adsPost.title || '（无标题）',
+      title: adsTitleMap[item.ads],
       enScale: `${scale.toFixed(1)}%`,
       details: item.details
     });
   }
 
-  // 按英文占比倒序排列
+  // 按英文占比倒序排序
   result.sort((a, b) => {
     const aVal = parseFloat(a.enScale);
     const bVal = parseFloat(b.enScale);
