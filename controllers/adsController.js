@@ -250,20 +250,22 @@ exports.getAdsDailyStats = async ctx => {
 // 获取协议号占比
 exports.getAdsUEN = async ctx => {
   const { ads } = ctx.query;
+
   if (!ads) {
     ctx.body = { code: 1, message: 'ads 参数缺失' };
     return;
   }
 
-  // 模糊匹配 ads
-  const regex = new RegExp(ads, 'i'); // 不区分大小写
+  const regex = new RegExp(ads, 'i'); // ads 模糊匹配
   const allUsers = await User.find({ ads: { $regex: regex } }).lean();
 
-  // 按 ads 分组
   const adsMap = {};
 
   for (const user of allUsers) {
     const adKey = user.ads || '未知';
+    const uname = user.uname || '';
+
+    const isEnglish = /^[\x00-\x7F]+$/.test(uname);
 
     if (!adsMap[adKey]) {
       adsMap[adKey] = {
@@ -274,27 +276,28 @@ exports.getAdsUEN = async ctx => {
       };
     }
 
-    const uname = user.uname || '';
-
-    // 判断是否为全英文名（无中文）
-    const isEnglish = /^[\x00-\x7F]+$/.test(uname);
-
     adsMap[adKey].total += 1;
+
     if (isEnglish) {
       adsMap[adKey].enCount += 1;
-      adsMap[adKey].details.push(user); // 只保留英文用户名
+      adsMap[adKey].details.push(user);
     }
   }
 
-  // 构建返回数组
-  const result = Object.values(adsMap).map(item => {
-    const scale = item.total === 0 ? 0 : (item.enCount / item.total) * 100;
-    return {
-      ads: item.ads,
-      enScale: `${scale.toFixed(1)}%`,
-      details: item.details
-    };
-  });
+  // 构建、过滤和排序结果
+  const result = Object.values(adsMap)
+    .map(item => {
+      const scale = item.total === 0 ? 0 : (item.enCount / item.total) * 100;
+      return {
+        ads: item.ads,
+        enScale: `${scale.toFixed(1)}%`,
+        enScaleValue: scale,
+        details: item.details
+      };
+    })
+    .filter(item => item.enScaleValue >= 20)
+    .sort((a, b) => b.enScaleValue - a.enScaleValue)
+    .map(({ enScaleValue, ...rest }) => rest); // 移除中间字段
 
   ctx.body = {
     code: 0,
