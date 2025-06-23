@@ -285,7 +285,7 @@ exports.getAdsUEN = async ctx => {
     return;
   }
 
-  const regex = new RegExp(ads, 'i'); // ads 模糊匹配
+  const regex = new RegExp(ads, 'i');
   const allUsers = await User.find({ ads: { $regex: regex } }).lean();
 
   const adsMap = {};
@@ -293,7 +293,6 @@ exports.getAdsUEN = async ctx => {
   for (const user of allUsers) {
     const adKey = user.ads || '未知';
     const uname = user.uname || '';
-
     const isEnglish = /^[\x00-\x7F]+$/.test(uname);
 
     if (!adsMap[adKey]) {
@@ -313,20 +312,37 @@ exports.getAdsUEN = async ctx => {
     }
   }
 
-  // 构建、过滤和排序结果
-  const result = Object.values(adsMap)
-    .map(item => {
-      const scale = item.total === 0 ? 0 : (item.enCount / item.total) * 100;
-      return {
-        ads: item.ads,
-        enScale: `${scale.toFixed(1)}%`,
-        enScaleValue: scale,
-        details: item.details
-      };
-    })
-    .filter(item => item.enScaleValue >= 20)
-    .sort((a, b) => b.enScaleValue - a.enScaleValue)
-    .map(({ enScaleValue, ...rest }) => rest); // 移除中间字段
+  // 处理分组结果，计算英文占比并匹配广告标题
+  const entries = Object.values(adsMap);
+
+  const result = [];
+
+  for (const item of entries) {
+    const scale = item.total === 0 ? 0 : (item.enCount / item.total) * 100;
+
+    // 英文占比小于 20%，跳过
+    if (scale < 20) continue;
+
+    // 匹配 AdsPost 表，获取广告标题
+    const adsPost = await AdsPost.findOne({ ads: item.ads }).lean();
+
+    // 没找到说明已删除，跳过
+    if (!adsPost) continue;
+
+    result.push({
+      ads: item.ads,
+      title: adsPost.title || '（无标题）',
+      enScale: `${scale.toFixed(1)}%`,
+      details: item.details
+    });
+  }
+
+  // 按英文占比倒序排列
+  result.sort((a, b) => {
+    const aVal = parseFloat(a.enScale);
+    const bVal = parseFloat(b.enScale);
+    return bVal - aVal;
+  });
 
   ctx.body = {
     code: 0,
