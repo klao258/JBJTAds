@@ -1,4 +1,5 @@
 const { Telegraf } = require('telegraf');
+const User = require('../models/user');
 const AdsPost = require('../models/adsPost');
 const AdsCpmLog = require('../models/adsCpmLog');
 const AdsDailyView = require('../models/adsDailyView');
