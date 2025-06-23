@@ -140,7 +140,15 @@ exports.recordDailyViews = async ctx => {
 
   // 推送余额不足
   if(adsUser && budget && budget < 10){
-    await bot.telegram.sendMessage(6893636059, `${adsUser}：余额不足${budget}`);
+    const chatId = 6893636059;
+    const msg = await bot.telegram.sendMessage(chatId, `${adsUser}：余额不足${budget}`);
+
+    // 设置 3 分钟（180000 毫秒）后删除该消息
+    setTimeout(() => {
+      bot.telegram.deleteMessage(chatId, msg.message_id).catch(err => {
+        console.error('删除消息失败：', err);
+      });
+    }, 3 * 60 * 1000);
   }
 
   // 推送总消耗
