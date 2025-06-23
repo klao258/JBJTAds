@@ -1,6 +1,9 @@
+const { Telegraf } = require('telegraf');
 const AdsPost = require('../models/adsPost');
 const AdsCpmLog = require('../models/adsCpmLog');
 const AdsDailyView = require('../models/adsDailyView');
+
+const bot = new Telegraf('8110362669:AAGPnA3XjB2EllKjy--4zBX66W81pyflRUo');
 
 // 获取当前北京时间
 const getNow = () => {
@@ -128,11 +131,21 @@ exports.recordCpmChange = async ctx => {
 
 // 按天记录浏览量（已实现）
 exports.recordDailyViews = async ctx => {
-  const { list } = ctx.request.body;
+  const { adsUser, budget, totalBudget, list } = ctx.request.body;
 
   if (!Array.isArray(list) || list.length === 0) {
     ctx.body = { code: 1, message: '参数缺失或格式错误，list 应为非空数组' };
     return;
+  }
+
+  // 推送余额不足
+  if(adsUser && budget && budget < 10){
+    await bot.telegram.sendMessage(6893636059, `${adsUser}：余额不足${budget}`);
+  }
+
+  // 推送总消耗
+  if(adsUser && totalBudget){
+    await bot.telegram.sendMessage(6893636059, `${adsUser}：总消耗${totalBudget}`);
   }
 
   const createDate = getNow()?.slice?.(0, 10); // 当前日期 YYYY-MM-DD

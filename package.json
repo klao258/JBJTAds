@@ -12,6 +12,7 @@
     "koa": "^2.14.2",
     "koa-bodyparser": "^4.3.0",
     "koa-router": "^10.1.1",
-    "mongoose": "^7.5.0"
+    "mongoose": "^7.5.0",
+    "telegraf": "^4.16.3"
   }
 }
