@@ -308,7 +308,7 @@ exports.getAdsUEN = async ctx => {
 
     if (isEnglish) {
       adsMap[adKey].enCount += 1;
-      adsMap[adKey].details.push(user);
+      adsMap[adKey].details.push({ uname: user.uname, amount: user.amount });
     }
   }
 
@@ -332,6 +332,7 @@ exports.getAdsUEN = async ctx => {
     result.push({
       ads: item.ads,
       title: adsTitleMap[item.ads],
+      total: item.total,
       enScale: `${scale.toFixed(1)}%`,
       details: item.details
     });
