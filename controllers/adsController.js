@@ -161,7 +161,7 @@ exports.recordCpmChange = async ctx => {
 
 // 按天记录浏览量（已实现）
 exports.recordDailyViews = async ctx => {
-  const { adsUser, budget, totalBudget, list } = ctx.request.body;
+  const { adsUser, budget, ySpent, totalBudget, list } = ctx.request.body;
 
   if (!Array.isArray(list) || list.length === 0) {
     ctx.body = { code: 1, message: '参数缺失或格式错误，list 应为非空数组' };
@@ -171,7 +171,7 @@ exports.recordDailyViews = async ctx => {
   // 推送余额不足
   if(adsUser && budget && budget < 10){
     const chatId = 6893636059;
-    const msg = await bot.telegram.sendMessage(chatId, `${adsUser}：余额不足${budget}`);
+    const msg = await bot.telegram.sendMessage(chatId, `${adsUser}：余额不足${budget}，昨日消耗${ySpent}`);
 
     // 设置 3 分钟（180000 毫秒）后删除该消息
     setTimeout(() => {
