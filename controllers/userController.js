@@ -193,57 +193,77 @@ exports.getUserStatsByPlatformAndUpcode = async (ctx) => {
   }
 };
 
-// 累计每个帖子的注册、付款、充值数据
+// 统计每个频道、机器人的注册、付款、充值数据
 exports.getAdsStatis = async ctx => {
   try {
     const result = await User.aggregate([
+      // 先按 ads 聚合出每个广告的数据
       {
         $group: {
           _id: "$ads",
           registerCount: { $sum: 1 },
-          payCount: { $sum: { $cond: [{ $gt: ["$amount", 0] }, 1, 0] } },
+          payCount: {
+            $sum: { $cond: [{ $gt: ["$amount", 0] }, 1, 0] }
+          },
           totalAmount: { $sum: "$amount" }
         }
       },
+      // 连表获取 title
       {
         $lookup: {
-          from: "adsposts", // 注意这里要用集合名称（小写复数，Mongoose 会自动转成 adsposts）
+          from: "adsposts", // 广告帖子集合名
           localField: "_id",
           foreignField: "ads",
           as: "adsInfo"
         }
       },
+      // 只保留有 title 的
       {
-        $addFields: {
-          title: {
-            $ifNull: [{ $arrayElemAt: ["$adsInfo.title", 0] }, "已删除"]
-          }
+        $match: {
+          "adsInfo.0": { $exists: true }
         }
       },
+      // 提取 title 字段
       {
         $project: {
-          _id: 0,
-          ads: "$_id",
-          title: 1,
+          title: { $arrayElemAt: ["$adsInfo.title", 0] },
           registerCount: 1,
           payCount: 1,
-          totalAmount: { $round: ["$totalAmount", 2] }
+          totalAmount: 1
+        }
+      },
+      // 按 title 聚合（多个相同标题的合并）
+      {
+        $group: {
+          _id: "$title",
+          registerCount: { $sum: "$registerCount" },
+          payCount: { $sum: "$payCount" },
+          totalAmount: { $sum: "$totalAmount" }
         }
       },
       {
         $sort: { registerCount: -1 }
+      },
+      {
+        $project: {
+          _id: 0,
+          title: "$_id",
+          registerCount: 1,
+          payCount: 1,
+          totalAmount: { $round: ["$totalAmount", 2] }
+        }
       }
     ]);
 
     ctx.body = {
       code: 0,
-      message: 'success',
+      message: "success",
       data: result
     };
   } catch (err) {
     ctx.body = {
       code: 1,
-      message: 'error',
+      message: "error",
       error: err.message
     };
   }
