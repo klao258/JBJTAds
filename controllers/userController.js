@@ -192,3 +192,59 @@ exports.getUserStatsByPlatformAndUpcode = async (ctx) => {
     ctx.body = { code: 1, message: '统计失败', error: err.message };
   }
 };
+
+// 累计每个帖子的注册、付款、充值数据
+exports.getAdsStatis = async ctx => {
+  try {
+    const result = await User.aggregate([
+      {
+        $group: {
+          _id: "$ads",
+          registerCount: { $sum: 1 },
+          payCount: { $sum: { $cond: [{ $gt: ["$amount", 0] }, 1, 0] } },
+          totalAmount: { $sum: "$amount" }
+        }
+      },
+      {
+        $lookup: {
+          from: "adsposts", // 注意这里要用集合名称（小写复数，Mongoose 会自动转成 adsposts）
+          localField: "_id",
+          foreignField: "ads",
+          as: "adsInfo"
+        }
+      },
+      {
+        $addFields: {
+          title: {
+            $ifNull: [{ $arrayElemAt: ["$adsInfo.title", 0] }, "已删除"]
+          }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          ads: "$_id",
+          title: 1,
+          registerCount: 1,
+          payCount: 1,
+          totalAmount: { $round: ["$totalAmount", 2] }
+        }
+      },
+      {
+        $sort: { registerCount: -1 }
+      }
+    ]);
+
+    ctx.body = {
+      code: 0,
+      message: 'success',
+      data: result
+    };
+  } catch (err) {
+    ctx.body = {
+      code: 1,
+      message: 'error',
+      error: err.message
+    };
+  }
+};
