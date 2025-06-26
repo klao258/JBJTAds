@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 // 广告CPM日志模型
 const AdsCpmLogSchema = new mongoose.Schema({
@@ -13,4 +13,5 @@ const AdsCpmLogSchema = new mongoose.Schema({
 
 AdsCpmLogSchema.index({ ads: 1, createDate: 1 });
 
-module.exports = mongoose.model('AdsCpmLog', AdsCpmLogSchema);
+const AdsCpmLog = mongoose.model('AdsCpmLog', AdsCpmLogSchema);
+export default AdsCpmLog;

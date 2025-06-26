@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 // 广告帖子模型
 const AdsPostSchema = new mongoose.Schema({
@@ -7,4 +7,5 @@ const AdsPostSchema = new mongoose.Schema({
   createDate: { type: String, required: true },
 });
 
-module.exports = mongoose.model('AdsPost', AdsPostSchema);
+const AdsPost = mongoose.model('AdsPost', AdsPostSchema);
+export default AdsPost;

@@ -1,4 +1,4 @@
-const User = require('../models/user');
+import User from '../models/user.js'
 
 // 获取当前北京时间
 const getNow = () => {
@@ -12,7 +12,7 @@ const getNow = () => {
 };
 
 // 批量同步用户信息（已实现）
-exports.syncUser = async ctx => {
+export const syncUser = async ctx => {
   const { users } = ctx.request.body;
 
   if (!Array.isArray(users) || users.length === 0) {
@@ -65,7 +65,7 @@ exports.syncUser = async ctx => {
 };
 
 // 根据用户id批量获取用户列表（已实现）
-exports.getUserBatch = async ctx => {
+export const getUserBatch = async ctx => {
   const { users } = ctx.request.body;
 
   if (!Array.isArray(users) || users.length === 0) {
@@ -90,7 +90,7 @@ exports.getUserBatch = async ctx => {
 }
 
 // 获取广告统计信息（已实现）
-exports.getAccoutPost = async ctx => {
+export const getAccoutPost = async ctx => {
   const { ads, platform } = ctx.query;
   const match = {};
 
@@ -136,7 +136,7 @@ exports.getAccoutPost = async ctx => {
 };
 
 // 统计所有上级用户的注册数量和累计金额（已实现）
-exports.getUserStatsByPlatformAndUpcode = async (ctx) => {
+export const getUserStatsByPlatformAndUpcode = async (ctx) => {
   try {
     const result = await User.aggregate([
       {
@@ -194,7 +194,7 @@ exports.getUserStatsByPlatformAndUpcode = async (ctx) => {
 };
 
 // 统计每个频道、机器人的注册、付款、充值数据
-exports.getAdsStatis = async ctx => {
+export const getAdsStatis = async ctx => {
   try {
     const result = await User.aggregate([
       // 先按 ads 聚合出每个广告的数据

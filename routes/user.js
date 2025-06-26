@@ -1,5 +1,5 @@
-const Router = require('koa-router');
-const userController = require('../controllers/userController');
+import Router from 'koa-router'
+import * as userController from '../controllers/userController.js'
 
 const router = new Router({ prefix: '/user' });
 
@@ -9,5 +9,4 @@ router.get('/getAccoutPost', userController.getAccoutPost);   // 获取账号帖
 router.get('/upcode', userController.getUserStatsByPlatformAndUpcode); // 根据upcode获取用户统计数据
 router.get('/getAdsStatis', userController.getAdsStatis); // 统计每个ads的注册、付款、充值数据
 
-
-module.exports = router;
+export default router

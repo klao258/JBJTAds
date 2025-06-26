@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 // 用户模型
 const UserSchema = new mongoose.Schema({
@@ -18,4 +18,5 @@ const UserSchema = new mongoose.Schema({
 UserSchema.index({ ads: 1, ucode: 1 });
 UserSchema.index({ platform: 1 });
 
-module.exports = mongoose.model('User', UserSchema);
+const User = mongoose.model('User', UserSchema);
+export default User;

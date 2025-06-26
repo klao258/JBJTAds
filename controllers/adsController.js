@@ -1,8 +1,8 @@
-const { Telegraf } = require('telegraf');
-const User = require('../models/user');
-const AdsPost = require('../models/adsPost');
-const AdsCpmLog = require('../models/adsCpmLog');
-const AdsDailyView = require('../models/adsDailyView');
+import { Telegraf } from 'telegraf'
+import User from '../models/user.js'
+import AdsPost from '../models/adsPost.js'
+import AdsCpmLog from '../models/adsCpmLog.js'
+import AdsDailyView from '../models/adsDailyView.js'
 
 const bot = new Telegraf('8110362669:AAGPnA3XjB2EllKjy--4zBX66W81pyflRUo');
 
@@ -34,7 +34,7 @@ const getDateStr = offset => {
 };
 
 // 同步广告信息
-exports.syncAds = async ctx => {
+export const syncAds = async ctx => {
   const { ads } = ctx.query;
 
   if (!ads) {
@@ -108,7 +108,7 @@ exports.syncAds = async ctx => {
 };
 
 // 获取CPM变动记录（已实现）
-exports.getCpmChanges = async ctx => {
+export const getCpmChanges = async ctx => {
   const { ads, startDate, endDate } = ctx.query;
   if (!ads) {
     ctx.body = { code: 1, message: 'ads参数缺失' };
@@ -140,7 +140,7 @@ exports.getCpmChanges = async ctx => {
 };
 
 // 记录CPM变动（已实现）
-exports.recordCpmChange = async ctx => {
+export const recordCpmChange = async ctx => {
   try {
     const { ads, cpm, float, views, clicks, actions } = ctx.request.body;
     if (!ads || cpm === undefined || float === undefined || views === undefined || clicks === undefined || actions === undefined) {
@@ -160,7 +160,7 @@ exports.recordCpmChange = async ctx => {
 };
 
 // 按天记录浏览量（已实现）
-exports.recordDailyViews = async ctx => {
+export const recordDailyViews = async ctx => {
   const { adsUser, budget, ySpent, totalBudget, list } = ctx.request.body;
 
   if (!Array.isArray(list) || list.length === 0) {
@@ -228,7 +228,7 @@ exports.recordDailyViews = async ctx => {
 };
 
 // 获取近三日的浏览数据
-exports.getAdsDailyStats = async ctx => {
+export const getAdsDailyStats = async ctx => {
   const { ads } = ctx.query;
 
   if (!ads) {
@@ -277,7 +277,7 @@ exports.getAdsDailyStats = async ctx => {
 };
 
 // 获取协议号占比
-exports.getAdsUEN = async ctx => {
+export const getAdsUEN = async ctx => {
   const { ads } = ctx.query;
 
   if (!ads) {

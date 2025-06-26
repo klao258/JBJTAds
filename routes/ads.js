@@ -1,5 +1,5 @@
-const Router = require('koa-router');
-const adsController = require('../controllers/adsController');
+import Router from 'koa-router'
+import * as adsController from '../controllers/adsController.js'
 
 const router = new Router({ prefix: '/ads' });
 
@@ -10,4 +10,4 @@ router.post('/recordViews', adsController.recordDailyViews);  //  记录日常�
 router.get('/getAdsDailyStats', adsController.getAdsDailyStats);    // 获取近3天views
 router.get('/getAdsUEN', adsController.getAdsUEN);    // 获取每个账号协议号占比（按用户昵称不到中文来判断）
 
-module.exports = router;
+export default router

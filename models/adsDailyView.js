@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 // 广告每日数据视图模型
 const AdsDailyViewSchema = new mongoose.Schema({
@@ -13,4 +13,5 @@ const AdsDailyViewSchema = new mongoose.Schema({
 
 AdsDailyViewSchema.index({ ads: 1, createDate: 1 }, { unique: true });
 
-module.exports = mongoose.model('AdsDailyView', AdsDailyViewSchema);
+const AdsDailyView = mongoose.model('AdsDailyView', AdsDailyViewSchema);
+export default AdsDailyView;

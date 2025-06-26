@@ -1,5 +1,5 @@
-require("dotenv").config()
-const mongoose = require('mongoose');
+import 'dotenv/config' // 或 import dotenv from 'dotenv'; dotenv.config();
+import mongoose from 'mongoose';
 
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
@@ -13,4 +13,4 @@ db.once('open', () => {
   console.log('✅ Mongoose connected to jbjtads');
 });
 
-module.exports = mongoose;
+export default mongoose;

@@ -1,10 +1,10 @@
-require("dotenv").config()
-const Koa = require('koa');
-// const cors = require('@koa/cors');
-const bodyParser = require('koa-bodyparser');
-const userRoutes = require('./routes/user');
-const adsRoutes = require('./routes/ads');
-require('./models/db'); // mongoose连接
+import 'dotenv/config' // 或 import dotenv from 'dotenv'; dotenv.config();
+import Koa from 'koa'
+// import cors from '@koa/cors'
+import bodyParser from 'koa-bodyparser'
+import userRoutes from './routes/user.js'
+import adsRoutes from './routes/ads.js'
+import './models/db.js' // mongoose 连接
 
 const app = new Koa();
 
