@@ -35,75 +35,45 @@ const getDateStr = offset => {
 
 // 同步广告信息
 export const syncAds = async ctx => {
-  const { ads } = ctx.query;
+  const { list } = ctx.request.body;
 
-  if (!ads) {
-    ctx.body = { code: 1, message: 'ads 参数缺失' };
+  // 验证传入参数是否为数组且非空
+  if (!Array.isArray(list) || list.length === 0) {
+    ctx.body = { code: 1, message: '参数缺失或格式错误，list 应为非空数组' };
     return;
   }
 
-  const regex = new RegExp(ads, 'i');
-  const allUsers = await User.find({ ads: { $regex: regex } }).lean();
+  const now = getNow();
+  const errors = [];
 
-  const adsMap = {};
+  for (const item of list) {
+    const { ads, title } = item || {};
 
-  for (const user of allUsers) {
-    const adKey = user.ads || '未知';
-    const uname = user.uname || '';
-    const isEnglish = /^[\x00-\x7F]+$/.test(uname);
-
-    if (!adsMap[adKey]) {
-      adsMap[adKey] = {
-        ads: adKey,
-        total: 0,
-        enCount: 0,
-        details: []
-      };
+    // 校验每一项的结构
+    if (!ads || !title) {
+      errors.push({ ads, message: 'ads 或 title 缺失' });
+      continue;
     }
 
-    adsMap[adKey].total += 1;
-
-    if (isEnglish) {
-      adsMap[adKey].enCount += 1;
-      adsMap[adKey].details.push(user);
+    try {
+      let post = await AdsPost.findOne({ ads });
+      if (post) {
+        post.title = title;
+        post.createDate = now;
+        await post.save();
+      } else {
+        post = new AdsPost({ ads, title, createDate: now });
+        await post.save();
+      }
+    } catch (err) {
+      errors.push({ ads, message: `保存失败：${err.message}` });
     }
   }
-
-  // 处理分组结果，计算英文占比并匹配广告标题
-  const entries = Object.values(adsMap);
-
-  const result = [];
-
-  for (const item of entries) {
-    const scale = item.total === 0 ? 0 : (item.enCount / item.total) * 100;
-
-    // 英文占比小于 20%，跳过
-    if (scale < 20) continue;
-
-    // 匹配 AdsPost 表，获取广告标题
-    const adsPost = await AdsPost.findOne({ ads: item.ads }).lean();
-
-    // 没找到说明已删除，跳过
-    if (!adsPost) continue;
-
-    result.push({
-      ads: item.ads,
-      title: adsPost.title || '（无标题）',
-      enScale: `${scale.toFixed(1)}%`,
-      details: item.details
-    });
-  }
-
-  // 按英文占比倒序排列
-  result.sort((a, b) => {
-    const aVal = parseFloat(a.enScale);
-    const bVal = parseFloat(b.enScale);
-    return bVal - aVal;
-  });
 
   ctx.body = {
-    code: 0,
-    data: result
+    code: errors.length ? 1 : 0,
+    message: errors.length ? '部分广告同步失败' : '广告同步成功',
+    errors,
   };
 };
 
