@@ -350,3 +350,60 @@ export const getAdsUEN = async ctx => {
     data: result
   };
 }
+
+// 获取今日注册数据
+export const getTodayData = async ctx => {
+  const { ads } = ctx.query;
+  if (!ads) {
+    ctx.body = { code: 1, message: 'ads 参数缺失' };
+    return;
+  }
+
+  const today = getNow()?.slice?.(0, 10); // 当前日期 YYYY-MM-DD
+
+  // 模糊查找今天的注册用户
+  const users = await User.find({
+    ads: { $regex: ads, $options: 'i' },
+    createDate: { $regex: `^${today}` }
+  }).lean();
+
+  if (users.length === 0) {
+    ctx.body = { code: 0, data: [] };
+    return;
+  }
+
+  // 获取用户涉及的 ads 列表
+  const adsSet = [...new Set(users.map(u => u.ads))];
+  const adsList = await AdsPost.find({ ads: { $in: adsSet } }).lean();
+
+  // 构建 ads => title 映射
+  const adsMap = {};
+  adsList.forEach(item => {
+    adsMap[item.ads] = item.title;
+  });
+
+  // 按 title 分组统计
+  const grouped = {};
+  for (const user of users) {
+    const title = adsMap[user.ads] || '未知广告';
+
+    if (!grouped[title]) {
+      grouped[title] = {
+        title,
+        details: [],
+        count: 0
+      };
+    }
+
+    grouped[title].details.push(user);
+    grouped[title].count++;
+  }
+
+  // 转换为数组并按 count 倒序排序
+  const sortedResult = Object.values(grouped).sort((a, b) => b.count - a.count);
+
+  ctx.body = {
+    code: 0,
+    data: sortedResult
+  };
+}
