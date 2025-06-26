@@ -360,12 +360,18 @@ export const getTodayData = async ctx => {
     if (!grouped[title]) {
       grouped[title] = {
         title,
-        details: [],
-        count: 0
+        count: 0,
+        details: []
       };
     }
 
-    grouped[title].details.push(user);
+    grouped[title].details.push({
+      ucode: user?.ucode || '',
+      uname: user?.uname || '',
+      upcode: user?.upcode || '',
+      upname: user?.upname || '',
+      amount: user?.amount || 0,
+    });
     grouped[title].count++;
   }
 
