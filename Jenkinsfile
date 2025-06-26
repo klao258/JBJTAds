@@ -33,7 +33,7 @@ pipeline {
                 sh 'sudo pm2 delete JBJTAds || true'
 
                 // 启动封装脚本
-                sh 'sudo pm2 start ecosystem.config.js --only JBJTAds'
+                sh 'sudo pm2 start ecosystem.config.cjs --only JBJTAds'
 
                 // 保存 PM2 状态（可选）
                 sh 'sudo pm2 save'
