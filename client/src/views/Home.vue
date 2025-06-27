@@ -117,7 +117,7 @@ const renderCell = (value, rowData, column) => {
   return value
 }
 
-const onSearch = (params) => {
+const onSearch = async (params) => {
   const queryString = new URLSearchParams(params).toString();
   let res = await fetch(`/user/getTodayStats?${queryString}`,)
       res = await res.json()
