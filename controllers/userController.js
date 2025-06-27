@@ -272,14 +272,11 @@ export const getAdsStatis = async ctx => {
 
 // 获取今日概览
 export const getTodayStats = async ctx => {
-  const todayStart = new Date();
-  todayStart.setHours(0, 0, 0, 0);
-  const todayEnd = new Date();
-  todayEnd.setHours(23, 59, 59, 999);
+  const today = getNow()?.slice?.(0, 10); // 当前日期 YYYY-MM-DD
 
   // 获取今日所有用户数据
   const users = await User.find({
-    createDate: { $gte: todayStart.toISOString(), $lte: todayEnd.toISOString() }
+    createDate: { $regex: `^${today}` }
   }).lean();
 
   // ✅ 用户角度统计
@@ -298,7 +295,7 @@ export const getTodayStats = async ctx => {
       userStats[key] = {
         platform: user.platform,
         upcode: user.upcode,
-        upname: upcodeMap[user.upcode] || '其他',
+        upname: upcodeMap[user.upcode] || '-',
         regCount: 0,
         payCount: 0,
         payAmount: 0
