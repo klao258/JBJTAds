@@ -32,4 +32,18 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'),
     },
   },
+  server: {
+    proxy: {
+      '/ads': {
+        target: 'https://jbjtads.sso66s.cc',
+        changeOrigin: true,
+        secure: false,
+      },
+      '/user': {
+        target: 'https://jbjtads.sso66s.cc',
+        changeOrigin: true,
+        secure: false,
+      }
+    }
+  }
 })

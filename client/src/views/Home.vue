@@ -21,8 +21,9 @@
     <div class="flex flex-1">
       <n-card title="账号统计">
         <n-data-table
+          style="height: calc(100% - 39px);"
           size="small"
-          max-height="100%"
+          :max-height="'calc(100% - 39px)'"
           :columns="[
             { title: '账号', key: 'adsAccount' },
             { title: '注册', key: 'regCount' },
@@ -38,9 +39,9 @@
     <div class="flex flex-1">
       <n-card title="帖子统计">
         <n-data-table
-          style="height: 100%;"
+          style="height: calc(100% - 39px);"
           size="small"
-          :max-height="'calc(100% - 40px)'"
+          :max-height="'calc(100% - 39px)'"
           :columns="[
             { title: '标题', key: 'title' },
             { title: '注册', key: 'regCount' },
