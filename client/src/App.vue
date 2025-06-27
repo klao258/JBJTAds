@@ -48,4 +48,7 @@ const themeOverrides = {
 .n-card-header__extra {
   color: red !important;
 }
+.n-card > .n-card__content{
+  overflow: hidden;
+}
 </style>
