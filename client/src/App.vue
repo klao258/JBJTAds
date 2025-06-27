@@ -42,6 +42,9 @@ const themeOverrides = {
   justify-content: space-between;
 }
 
+.page{
+  height: 100% !important;
+}
 .n-card-header__extra {
   color: red !important;
 }

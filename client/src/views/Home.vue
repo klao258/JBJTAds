@@ -7,7 +7,7 @@
       :pagination="pagination"
     />
   </div> -->
-  <div class="flex flex-v">
+  <div class="page flex flex-v">
     <div class="flex">
       <n-card :title="v.platform" v-for="(v, k) in userStats" :key="k">
         <template #header-extra>注册总数：{{ v.regCount }}</template>
