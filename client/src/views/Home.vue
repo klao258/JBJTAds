@@ -18,12 +18,11 @@
       </n-card>
     </div>
 
-    <div class="flex flex-1">
+    <div class="flex">
       <n-card title="账号统计">
         <n-data-table
-          style="height: calc(100% - 39px);"
           size="small"
-          :max-height="'calc(100% - 39px)'"
+          :max-height="300"
           :columns="[
             { title: '账号', key: 'adsAccount' },
             { title: '注册', key: 'regCount' },
@@ -36,19 +35,20 @@
       </n-card>
     </div>
 
-    <div class="flex flex-1">
+    <div class="flex flex-1" >
       <n-card title="帖子统计">
-        <n-data-table
-          style="height: calc(100% - 39px);"
-          size="small"
-          :max-height="'calc(100% - 39px)'"
-          :columns="[
-            { title: '标题', key: 'title' },
-            { title: '注册', key: 'regCount' },
-            { title: '付款', key: 'payCount' },
-            { title: '金额', key: 'payAmount' },
-          ]"
-          :data="postStats" />
+        <div style="height: 100%;" ref="postTableRef">
+          <n-data-table
+            size="small"
+            :max-height="postTableHeight"
+            :columns="[
+              { title: '标题', key: 'title' },
+              { title: '注册', key: 'regCount' },
+              { title: '付款', key: 'payCount' },
+              { title: '金额', key: 'payAmount' },
+            ]"
+            :data="postStats" />
+        </div>
       </n-card>
     </div>
   </div>
@@ -56,23 +56,6 @@
 
 <script setup>
 import SearchForm from '@/components/Form.vue'
-import Table from '@/components/Table.vue'
-
-const loading = ref(false)
-const pagination = reactive({
-  page: 1,
-  pageSize: 10,
-  total: 50
-})
-const columns = reactive([
-  { title: 'ID', key: 'id' },
-  { title: '昵称', key: 'nickname' },
-  { title: '充值额', key: 'recharge', sortable: true }
-])
-const tableData = reactive([
-  { id: 1, nickname: '用户A', recharge: 100 },
-  { id: 2, nickname: '用户B', recharge: 200 }
-])
 
 const account = {
   ZhaoShang: '金貝招商',
@@ -100,6 +83,19 @@ const userStats = reactive([])
 const accountStats = reactive([])
 const postStats = reactive([])
 
+const postTableRef = ref(null)
+const postTableHeight = ref(400) // 默认高度
+
+// 设置表格高度
+const setPostTableHeight = async () => {
+  await nextTick() // 确保 DOM 已渲染
+  if (postTableRef.value) {
+    const height = postTableRef.value.clientHeight
+    postTableHeight.value = height - 40 // 自定义偏移，例如减去表头高度
+  }
+}
+
+// 格式化单元格数据
 const renderCell = (value, rowData, column) => {
   if(column.key === 'adsAccount'){
     return account[value] || value
@@ -107,14 +103,17 @@ const renderCell = (value, rowData, column) => {
   return value
 }
 
+// 获取数据
 const onSearch = async (params) => {
   const queryString = new URLSearchParams(params).toString();
   let res = await fetch(`/user/getTodayStats?${queryString}`)
       res = await res.json()
   let data = res?.data || {}
       userStats.splice(0, userStats.length, ...data?.userStats);
-      accountStats.splice(0, userStats.length, ...data?.accountStats)
+      accountStats.splice(0, accountStats.length, ...data?.accountStats)
       postStats.splice(0, postStats.length, ...data?.postStats)
+
+  await setPostTableHeight()
   console.log(data)
 }
 
