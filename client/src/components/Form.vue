@@ -80,8 +80,6 @@
   </template>
   
   <script setup>
-  import { ref, reactive } from 'vue'
-  
   // ✅ 定义可传入字段控制搜索项展示
   const props = defineProps({
     fields: {
@@ -101,12 +99,16 @@
     date: new Date().getTime(),
     dateRange: [new Date().getTime(), new Date().getTime()]
   }
-  const rangeShortcuts = reactive[{
-      近2小时: () => {
+  const rangeShortcuts = reactive({
+      本月: () => {
         const cur = (new Date()).getTime();
-        return [cur - 2 * 60 * 60 * 1e3, cur];
+        const Y = new Date()?.getFullYear()
+        const M = new Date()?.getMonth() + 1
+        const first = new Date(`${Y}-${M}-01 00:00:00`).getTime()
+
+        return [first, cur];
       }
-  }]
+  })
   const form = reactive({ ...initialForm })
 
   onMounted(() => {
