@@ -21,8 +21,37 @@
           { title: '金额', key: 'payAmount' },
         ]"
         :data="v.children"
-        :pagination="false"
-        :bordered="false"
+      />
+    </n-card>
+  </div>
+
+  <div class="flex">
+    <n-card title="账号统计">
+      <n-data-table
+        size="small"
+        :columns="[
+          { title: '账号', key: 'adsAccount' },
+          { title: '注册', key: 'regCount' },
+          { title: '付款', key: 'payCount' },
+          { title: '金额', key: 'payAmount' },
+        ]"
+        :data="accountStats"
+        :render-cell="renderCell"
+      />
+    </n-card>
+  </div>
+
+  <div class="flex">
+    <n-card title="帖子统计">
+      <n-data-table
+        size="small"
+        :columns="[
+          { title: '标题', key: 'title' },
+          { title: '注册', key: 'regCount' },
+          { title: '付款', key: 'payCount' },
+          { title: '金额', key: 'payAmount' },
+        ]"
+        :data="postStats"
       />
     </n-card>
   </div>
@@ -49,6 +78,8 @@ const tableData = reactive([
 ])
 
 const userStats = reactive([])
+const accountStats = reactive([])
+const postStats = reactive([])
 
 onMounted(() => {
   getTodayState()
@@ -59,8 +90,15 @@ const getTodayState = async () => {
       res = await res.json()
   let data = res?.data || {}
       userStats.splice(0, userStats.length, ...data?.userStats);
-
+      accountStats.splice(0, userStats.length, ...data?.accountStats)
+      postStats.splice(0, postStats.length, ...data?.postStats)
   console.log(data)
+}
+
+const renderCell = (value, rowData, column) => {
+  // DataTableBaseColumn
+console.log(column)
+  return value
 }
 
 const onSearch = (payload) => {
