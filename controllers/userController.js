@@ -391,9 +391,9 @@ export const getTodayStats = async ctx => {
     code: 0,
     message: 'ok',
     data: {
-      userStats,
-      accountStats: Object.values(accountStats),
-      postStats: Object.values(postStats)
+      userStats: userStats.sort((a, b) => b.regCount - a.regCount),
+      accountStats: Object.values(accountStats).sort((a, b) => b.regCount - a.regCount),
+      postStats: Object.values(postStats).sort((a, b) => b.regCount - a.regCount),
     }
   };
 };
