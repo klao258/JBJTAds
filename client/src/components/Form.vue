@@ -80,19 +80,7 @@
   })
   
   const emit = defineEmits(['search', 'reset'])
-  
-  const formRef = ref(null)
-  
-  const initialForm = {
-    platform: '',
-    account: '',
-    pcode: '',
-    ads: '',
-    date: getNow()
-  }
-  
-  const form = reactive({ ...initialForm })
-  
+
   // 获取当前北京时间
   const getNow = (offset = 0, format = 'YYYY-MM-DD') => {
     const now = new Date();
@@ -119,6 +107,19 @@
       .replace('mm', minute)
       .replace('ss', second);
   };
+  
+  const formRef = ref(null)
+  const initialForm = {
+    platform: '',
+    account: '',
+    pcode: '',
+    ads: '',
+    date: getNow()
+  }
+  
+  const form = reactive({ ...initialForm })
+  
+
 
   // 平台
   const platformOptions = [
