@@ -7,7 +7,6 @@
         <n-data-table
           size="small"
           :columns="[
-            { title: '#', key: 'no' },
             { title: '名称', key: 'upname' },
             { title: '编码', key: 'upcode' },
             { title: '注册', key: 'regCount' },
@@ -25,7 +24,6 @@
           size="small"
           :max-height="300"
           :columns="[
-            { title: '#', key: 'no' },
             { title: '账号', key: 'adsAccount' },
             { title: '注册', key: 'regCount' },
             { title: '付款', key: 'payCount' },
@@ -44,7 +42,6 @@
             size="small"
             :max-height="postTableHeight"
             :columns="[
-              { title: '#', key: 'no' },
               { title: '标题', key: 'title' },
               { title: '注册', key: 'regCount' },
               { title: '付款', key: 'payCount' },
