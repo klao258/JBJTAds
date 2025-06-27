@@ -1,4 +1,5 @@
 import User from '../models/user.js'
+import AdsPost from '../models/adsPost.js'
 
 // 获取当前北京时间
 const getNow = () => {
@@ -267,4 +268,102 @@ export const getAdsStatis = async ctx => {
       error: err.message
     };
   }
+};
+
+// 获取今日概览
+export const getTodayStats = async ctx => {
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
+  const todayEnd = new Date();
+  todayEnd.setHours(23, 59, 59, 999);
+
+  // 获取今日所有用户数据
+  const users = await User.find({
+    createDate: { $gte: todayStart.toISOString(), $lte: todayEnd.toISOString() }
+  }).lean();
+
+  // ✅ 用户角度统计
+  const upcodeMap = {
+    '53377': 'A仔',
+    '64777': '光头',
+    '64782': '光头',
+    '22782': '安仔',
+    '22780': '大山'
+  };
+
+  const userStats = {};
+  for (const user of users) {
+    const key = `${user.platform}__${upcodeMap[user.upcode] || user.upcode}`;
+    if (!userStats[key]) {
+      userStats[key] = {
+        platform: user.platform,
+        upcode: user.upcode,
+        upname: upcodeMap[user.upcode] || '其他',
+        regCount: 0,
+        payCount: 0,
+        payAmount: 0
+      };
+    }
+    userStats[key].regCount += 1;
+    if (user.amount > 0) {
+      userStats[key].payCount += 1;
+      userStats[key].payAmount += user.amount;
+    }
+  }
+
+  // ✅ 广告账号角度统计（ads 拆解后取下标为1）
+  const accountStats = {};
+  for (const user of users) {
+    const adsAccount = user.ads?.split('-')?.[1] || '未知';
+    if (!accountStats[adsAccount]) {
+      accountStats[adsAccount] = {
+        adsAccount,
+        regCount: 0,
+        payCount: 0,
+        payAmount: 0
+      };
+    }
+    accountStats[adsAccount].regCount += 1;
+    if (user.amount > 0) {
+      accountStats[adsAccount].payCount += 1;
+      accountStats[adsAccount].payAmount += user.amount;
+    }
+  }
+
+  // ✅ 帖子角度统计（ads 找 title）
+  const adsSet = [...new Set(users.map(u => u.ads))];
+  const adsPosts = await AdsPost.find({ ads: { $in: adsSet } }).lean();
+
+  const titleMap = {};
+  for (const post of adsPosts) {
+    titleMap[post.ads] = post.title;
+  }
+
+  const postStats = {};
+  for (const user of users) {
+    const title = titleMap[user.ads] || '未知';
+    if (!postStats[title]) {
+      postStats[title] = {
+        title,
+        regCount: 0,
+        payCount: 0,
+        payAmount: 0
+      };
+    }
+    postStats[title].regCount += 1;
+    if (user.amount > 0) {
+      postStats[title].payCount += 1;
+      postStats[title].payAmount += user.amount;
+    }
+  }
+
+  ctx.body = {
+    code: 0,
+    message: 'ok',
+    data: {
+      userStats: Object.values(userStats),
+      accountStats: Object.values(accountStats),
+      postStats: Object.values(postStats)
+    }
+  };
 };
