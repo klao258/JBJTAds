@@ -44,17 +44,18 @@
 
     <div class="flex flex-1">
       <n-card title="帖子统计">
-        <n-data-table
-          size="small"
-          max-height="100%"
-          :columns="[
-            { title: '标题', key: 'title' },
-            { title: '注册', key: 'regCount' },
-            { title: '付款', key: 'payCount' },
-            { title: '金额', key: 'payAmount' },
-          ]"
-          :data="postStats"
-        />
+        <div style="height: 250px;">
+          <n-data-table
+            size="small"
+            max-height="100%"
+            :columns="[
+              { title: '标题', key: 'title' },
+              { title: '注册', key: 'regCount' },
+              { title: '付款', key: 'payCount' },
+              { title: '金额', key: 'payAmount' },
+            ]"
+            :data="postStats" />
+        </div>
       </n-card>
     </div>
   </div>
