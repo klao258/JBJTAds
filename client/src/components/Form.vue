@@ -49,13 +49,13 @@
       </n-form-item>
 
       <!-- 创建时间 -->
-      <n-form-item v-if="fields.includes('date')" label="ads:" class="form-item-inline">
+      <n-form-item v-if="fields.includes('createDate')" label="日期:" class="form-item-inline">
         <n-date-picker
-          v-model:formatted-value="form.date"
+          v-model:value="form.createDate"
           value-format="yyyy.MM.dd"
           type="date"
           clearable
-          @update:value="handleSearch"
+          @update:value="(value) => handleSearch()"
         />
       </n-form-item>
 
@@ -75,38 +75,11 @@
   const props = defineProps({
     fields: {
       type: Array,
-      default: () => ['platform', 'account', 'pcode', 'ads', 'date']
+      default: () => ['platform', 'account', 'pcode', 'ads', 'createDate']
     }
   })
   
   const emit = defineEmits(['search', 'reset'])
-
-  // 获取当前北京时间
-  const getNow = (offset = 0, format = 'YYYY-MM-DD') => {
-    const now = new Date();
-
-    // 转为 Asia/Shanghai 时区的本地时间
-    const utc = now.getTime() + now.getTimezoneOffset() * 60000;
-    const targetTime = new Date(utc + 8 * 3600000 + offset * 86400000);
-
-    const pad = (n) => String(n).padStart(2, '0');
-
-    const year = targetTime.getFullYear();
-    const month = pad(targetTime.getMonth() + 1);
-    const day = pad(targetTime.getDate());
-    const hour = pad(targetTime.getHours());
-    const minute = pad(targetTime.getMinutes());
-    const second = pad(targetTime.getSeconds());
-
-    // 替换格式模板
-    return format
-      .replace('YYYY', year)
-      .replace('MM', month)
-      .replace('DD', day)
-      .replace('hh', hour)
-      .replace('mm', minute)
-      .replace('ss', second);
-  };
   
   const formRef = ref(null)
   const initialForm = {
@@ -114,11 +87,14 @@
     account: '',
     pcode: '',
     ads: '',
-    date: getNow()
+    createDate: new Date().getTime()
   }
   
   const form = reactive({ ...initialForm })
-  
+
+  onMounted(() => {
+    handleSearch()
+  })
 
 
   // 平台
@@ -162,10 +138,23 @@
     { label: '大山', value: '22780' },
     { label: '安仔', value: '22782' }
   ]
+
+  const formatDate = (timestamp) => {
+    const date = new Date(Number(timestamp))
+    if (isNaN(date.getTime())) return ''
+
+    const y = date.getFullYear()
+    const m = String(date.getMonth() + 1).padStart(2, '0') // 补0
+    const d = String(date.getDate()).padStart(2, '0')      // 补0
+
+    return `${y}-${m}-${d}`
+  }
   
   // 查询
   const handleSearch = () => {
-    emit('search', { ...form })
+    let params = JSON.parse(JSON.stringify(form))
+    const createDate = formatDate(params['createDate'] || '')
+    emit('search', {...params, createDate})
   }
   
   // 重置

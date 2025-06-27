@@ -1,13 +1,6 @@
 <template>
-  <div>
-    <SearchForm :fields="['date']" @search="onSearch" @reset="onSearch" />
-    <!-- <Table
-      :columns="columns"
-      :data="tableData"
-      :pagination="pagination"
-    /> -->
-  </div>
   <div class="page flex flex-v">
+    <SearchForm :fields="['createDate']" @search="onSearch" @reset="onSearch" />
     <div class="flex">
       <n-card :title="v.platform" v-for="(v, k) in userStats" :key="k">
         <template #header-extra>注册总数：{{ v.regCount }}</template>
@@ -106,10 +99,6 @@ const userStats = reactive([])
 const accountStats = reactive([])
 const postStats = reactive([])
 
-onMounted(() => {
-  onSearch()
-})
-
 const renderCell = (value, rowData, column) => {
   if(column.key === 'adsAccount'){
     return account[value] || value
@@ -119,7 +108,7 @@ const renderCell = (value, rowData, column) => {
 
 const onSearch = async (params) => {
   const queryString = new URLSearchParams(params).toString();
-  let res = await fetch(`/user/getTodayStats?${queryString}`,)
+  let res = await fetch(`/user/getTodayStats?${queryString}`)
       res = await res.json()
   let data = res?.data || {}
       userStats.splice(0, userStats.length, ...data?.userStats);
