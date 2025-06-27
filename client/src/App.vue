@@ -41,4 +41,8 @@ const themeOverrides = {
 .flex-between{
   justify-content: space-between;
 }
+
+.n-card-header__extra {
+  color: red !important;
+}
 </style>
