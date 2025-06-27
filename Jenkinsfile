@@ -18,6 +18,11 @@ pipeline {
             }
         }
 
+        steps {
+            sh 'rm -rf client/dist/'
+            checkout scm
+        }
+
         stage('安装依赖') {
             steps {
                 echo '📦 安装依赖...'
