@@ -77,6 +77,28 @@ const tableData = reactive([
   { id: 2, nickname: '用户B', recharge: 200 }
 ])
 
+const account = {
+  ZhaoShang: '金貝招商',
+  BeiBei: 'ads 贝贝',
+  HuanHuan: 'ads 欢欢',
+  KeKe: 'ads 可可',
+  FeiFei: 'ads 菲菲',
+  TouTou: 'ads 头头',
+  LaoK: 'ads 老k',
+  ADSZuZhi: 'ADS组织',
+  GZKK: '金貝推广-KK',
+  GZTianTian: '金貝推广-天天',
+  JingJing: 'ads 晶晶',
+  YingYing: 'ads 莹莹',
+  NiNi: 'ads 妮妮',
+  GZQiQi: '金貝推广-七月',
+  TS1: '天胜1',
+  TS2: '天胜2',
+  TSXiaoBao: '天胜3',
+  TSGuoBa: '天胜4',
+  TS5: '天胜5',
+  TS6: '天胜6',
+}
 const userStats = reactive([])
 const accountStats = reactive([])
 const postStats = reactive([])
@@ -96,8 +118,9 @@ const getTodayState = async () => {
 }
 
 const renderCell = (value, rowData, column) => {
-  // DataTableBaseColumn
-console.log(column)
+  if(column.key === 'adsAccount'){
+    return account[value] || value
+  }
   return value
 }
 
