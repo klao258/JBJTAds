@@ -11,11 +11,17 @@ pipeline {
     }
 
     stages {
+        stage('清理工作区') {
+            steps {
+                echo '清理工作区...'
+                deleteDir()  // Jenkins 内置清理当前 workspace 方法
+            }
+        }
+
         stage('拉取代码') {
             steps {
                 echo '📥 拉取 GitHub 最新代码...'
                 checkout scm
-                sh 'sudo rm -rf client/dist/'
             }
         }
 
