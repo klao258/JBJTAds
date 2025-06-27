@@ -8,7 +8,7 @@
     />
   </div> -->
 
-  <div>
+  <div class="flex">
     <n-card :title="v.platform" v-for="(v, k) in userStats" :key="k">
       <template #header-extra>注册总数：{{ v.regCount }}</template>
       <n-data-table

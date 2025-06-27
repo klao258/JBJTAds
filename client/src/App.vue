@@ -15,8 +15,27 @@ const themeOverrides = {
 }
 </script>
 
-<style scoped>
-nav {
-  margin-bottom: 1em;
+<style>
+.flex{
+  display: flex;
+}
+.flex-v{
+  flex-direction: column;
+}
+.flex-1{
+  flex: 1;
+}
+.flex-center-x {
+  justify-content: center;
+}
+.flex-center-y {
+  align-items: center;
+}
+.flex-center {
+  justify-content: center;
+  align-items: center;
+}
+.flex-between{
+  justify-content: space-between;
 }
 </style>
