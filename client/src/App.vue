@@ -5,11 +5,13 @@
 </template>
   
 <script setup>
+import { NConfigProvider } from 'naive-ui'
 import DefaultLayout from '@/components/Menu.vue'
 
 const themeOverrides = {
   common: {},
   Card: {
+    titleTextColor: '#42b983', // 设置标题文字颜色
     paddingMedium: '5px 10px'  // 修改默认中等尺寸 padding
   }
 }
