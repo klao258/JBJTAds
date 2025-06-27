@@ -18,7 +18,7 @@
       </n-card>
     </div>
 
-    <div class="flex">
+    <div class="flex flex-1">
       <n-card title="账号统计">
         <n-data-table
           size="small"
