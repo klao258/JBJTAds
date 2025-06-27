@@ -60,7 +60,7 @@ const getTodayState = async () => {
   let data = res?.data || {}
       userStats.splice(0, userStats.length, ...data?.userStats);
 
-  console.log(userStats)
+  console.log(data)
 }
 
 const onSearch = (payload) => {
