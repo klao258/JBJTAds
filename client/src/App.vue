@@ -24,6 +24,7 @@ const themeOverrides = {
 }
 .flex-1{
   flex: 1;
+  overflow: hidden;
 }
 .flex-center-x {
   justify-content: center;
