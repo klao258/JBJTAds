@@ -11,6 +11,12 @@ pipeline {
     }
 
     stages {
+        stage('修复权限') {
+            steps {
+                sh 'sudo chown -R jenkins:jenkins ./'
+            }
+        }
+
         stage('拉取代码') {
             steps {
                 echo '📥 拉取 GitHub 最新代码...'
