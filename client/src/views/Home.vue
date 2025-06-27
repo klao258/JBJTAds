@@ -1,11 +1,29 @@
 <template>
-  <div>
+  <!-- <div>
     <SearchForm @search="onSearch" @reset="onSearch" />
     <Table
       :columns="columns"
       :data="tableData"
       :pagination="pagination"
     />
+  </div> -->
+
+  <div>
+    <n-card :title="v.platform" v-for="(v, k) in userStats" :key="k">
+      <template #header-extra>注册总数：{{ v.regCount }}</template>
+      <n-data-table
+        :columns="[
+          { title: '名称', key: 'upname' },
+          { title: '编码', key: 'upcode' },
+          { title: '注册', key: 'regCount' },
+          { title: '付款', key: 'payCount' },
+          { title: '金额', key: 'payAmount' },
+        ]"
+        :data="v.children"
+        :pagination="false"
+        :bordered="false"
+      />
+    </n-card>
   </div>
 </template>
 
