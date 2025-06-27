@@ -7,53 +7,54 @@
       :pagination="pagination"
     />
   </div> -->
+  <div class="flex flex-v">
+    <div class="flex">
+      <n-card :title="v.platform" v-for="(v, k) in userStats" :key="k">
+        <template #header-extra>注册总数：{{ v.regCount }}</template>
+        <n-data-table
+          size="small"
+          :columns="[
+            { title: '名称', key: 'upname' },
+            { title: '编码', key: 'upcode' },
+            { title: '注册', key: 'regCount' },
+            { title: '付款', key: 'payCount' },
+            { title: '金额', key: 'payAmount' },
+          ]"
+          :data="v.children"
+        />
+      </n-card>
+    </div>
 
-  <div class="flex">
-    <n-card :title="v.platform" v-for="(v, k) in userStats" :key="k">
-      <template #header-extra>注册总数：{{ v.regCount }}</template>
-      <n-data-table
-        size="small"
-        :columns="[
-          { title: '名称', key: 'upname' },
-          { title: '编码', key: 'upcode' },
-          { title: '注册', key: 'regCount' },
-          { title: '付款', key: 'payCount' },
-          { title: '金额', key: 'payAmount' },
-        ]"
-        :data="v.children"
-      />
-    </n-card>
-  </div>
+    <div class="flex flex-1">
+      <n-card title="账号统计">
+        <n-data-table
+          size="small"
+          :columns="[
+            { title: '账号', key: 'adsAccount' },
+            { title: '注册', key: 'regCount' },
+            { title: '付款', key: 'payCount' },
+            { title: '金额', key: 'payAmount' },
+          ]"
+          :data="accountStats"
+          :render-cell="renderCell"
+        />
+      </n-card>
+    </div>
 
-  <div class="flex">
-    <n-card title="账号统计">
-      <n-data-table
-        size="small"
-        :columns="[
-          { title: '账号', key: 'adsAccount' },
-          { title: '注册', key: 'regCount' },
-          { title: '付款', key: 'payCount' },
-          { title: '金额', key: 'payAmount' },
-        ]"
-        :data="accountStats"
-        :render-cell="renderCell"
-      />
-    </n-card>
-  </div>
-
-  <div class="flex">
-    <n-card title="帖子统计">
-      <n-data-table
-        size="small"
-        :columns="[
-          { title: '标题', key: 'title' },
-          { title: '注册', key: 'regCount' },
-          { title: '付款', key: 'payCount' },
-          { title: '金额', key: 'payAmount' },
-        ]"
-        :data="postStats"
-      />
-    </n-card>
+    <div class="flex flex-1">
+      <n-card title="帖子统计">
+        <n-data-table
+          size="small"
+          :columns="[
+            { title: '标题', key: 'title' },
+            { title: '注册', key: 'regCount' },
+            { title: '付款', key: 'payCount' },
+            { title: '金额', key: 'payAmount' },
+          ]"
+          :data="postStats"
+        />
+      </n-card>
+    </div>
   </div>
 </template>
 
