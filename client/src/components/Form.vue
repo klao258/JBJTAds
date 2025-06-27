@@ -100,14 +100,26 @@
     dateRange: [new Date().getTime(), new Date().getTime()]
   }
   const rangeShortcuts = reactive({
-      本月: () => {
-        const cur = (new Date()).getTime();
-        const Y = new Date()?.getFullYear()
-        const M = new Date()?.getMonth() + 1
-        const first = new Date(`${Y}-${M}-01 00:00:00`).getTime()
+    本月: () => {
+      const cur = (new Date()).getTime();
+      const d = new Date()?.getDate()
+      const firstDate = getDate(-d + 1)
+      const first = new Date(`${firstDate} 00:00:00`).getTime()
 
-        return [first, cur];
-      }
+      return [first, cur];
+    },
+    前天: () => {
+        const firstDate = getDate(-3 + 1)
+        const first = new Date(`${firstDate} 00:00:00`).getTime()
+        const last = new Date(`${firstDate} 23:59:59`).getTime()
+        return [first, last];
+    },
+    昨天: () => {
+        const firstDate = getDate(-2 + 1)
+        const first = new Date(`${firstDate} 00:00:00`).getTime()
+        const last = new Date(`${firstDate} 23:59:59`).getTime()
+        return [first, last];
+    }
   })
   const form = reactive({ ...initialForm })
 
@@ -157,6 +169,32 @@
     { label: '大山', value: '22780' },
     { label: '安仔', value: '22782' }
   ]
+
+  const getDate = (offset = 0, format = 'YYYY-MM-DD') => {
+    const now = new Date();
+
+    // 转为 Asia/Shanghai 时区的本地时间
+    const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+    const targetTime = new Date(utc + 8 * 3600000 + offset * 86400000);
+
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const year = targetTime.getFullYear();
+    const month = pad(targetTime.getMonth() + 1);
+    const day = pad(targetTime.getDate());
+    const hour = pad(targetTime.getHours());
+    const minute = pad(targetTime.getMinutes());
+    const second = pad(targetTime.getSeconds());
+
+    // 替换格式模板
+    return format
+      .replace('YYYY', year)
+      .replace('MM', month)
+      .replace('DD', day)
+      .replace('HH', hour)
+      .replace('mm', minute)
+      .replace('ss', second);
+  }
 
   const formatDate = (timestamp) => {
     const date = new Date(Number(timestamp))
