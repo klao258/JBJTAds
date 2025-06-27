@@ -331,8 +331,9 @@ export const getTodayStats = async ctx => {
   }
 
   // 转换结果为数组结构
-  const userStats = Object.values(platformMap).map(plat => {
+  const userStats = Object.values(platformMap).map((plat, index) => {
     return {
+      no: index,
       platform: plat.platform,
       regCount: plat.regCount,
       payCount: plat.payCount,
@@ -343,10 +344,11 @@ export const getTodayStats = async ctx => {
 
   // ✅ 广告账号角度统计（ads 拆解后取下标为1）
   const accountStats = {};
-  for (const user of users) {
+  for (const [index, user] of users.entries()) {
     const adsAccount = user.ads?.split('-')?.[1] || '未知';
     if (!accountStats[adsAccount]) {
       accountStats[adsAccount] = {
+        no: index,
         adsAccount,
         regCount: 0,
         payCount: 0,
@@ -370,10 +372,11 @@ export const getTodayStats = async ctx => {
   }
 
   const postStats = {};
-  for (const user of users) {
+  for (const [index, user] of users.entries()) {
     const title = titleMap[user.ads] || '未知';
     if (!postStats[title]) {
       postStats[title] = {
+        no: index,
         title,
         regCount: 0,
         payCount: 0,
