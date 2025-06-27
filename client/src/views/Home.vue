@@ -29,6 +29,8 @@ const tableData = reactive([
   { id: 2, nickname: '用户B', recharge: 200 }
 ])
 
+const userStats = reactive([])
+
 onMounted(() => {
   getTodayState()
 })
@@ -36,7 +38,10 @@ onMounted(() => {
 const getTodayState = async () => {
   let res = await fetch('/user/getTodayStats')
       res = await res.json()
-  console.log(res)
+  let data = res?.data || {}
+      userStats.splice(0, userStats.length, ...data?.userStats);
+
+  console.log(userStats)
 }
 
 const onSearch = (payload) => {
