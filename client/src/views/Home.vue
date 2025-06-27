@@ -42,7 +42,7 @@
       </n-card>
     </div>
 
-    <div class="flex">
+    <div class="flex flex-1">
       <n-card title="帖子统计">
         <n-data-table
           size="small"
