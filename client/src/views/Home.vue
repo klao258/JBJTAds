@@ -29,6 +29,7 @@
       <n-card title="账号统计">
         <n-data-table
           size="small"
+          :max-height="400"
           :columns="[
             { title: '账号', key: 'adsAccount' },
             { title: '注册', key: 'regCount' },
@@ -45,6 +46,7 @@
       <n-card title="帖子统计">
         <n-data-table
           size="small"
+          :max-height="400"
           :columns="[
             { title: '标题', key: 'title' },
             { title: '注册', key: 'regCount' },
