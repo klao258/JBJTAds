@@ -275,9 +275,7 @@ export const getTodayStats = async ctx => {
   const today = getNow()?.slice?.(0, 10); // 当前日期 YYYY-MM-DD
 
   // 获取今日所有用户数据
-  const users = await User.find({
-    createDate: { $regex: `^${today}` }
-  }).lean();
+  const users = await User.find({ createDate: { $regex: `^${today}` } }).lean();
 
   // ✅ 用户角度统计
   const upcodeMap = {
@@ -288,25 +286,60 @@ export const getTodayStats = async ctx => {
     '22780': '大山'
   };
 
-  const userStats = {};
+  // 先聚合：platform => 子 upcode 映射
+  const platformMap = {};
+
   for (const user of users) {
-    const key = `${user.platform}__${upcodeMap[user.upcode] || user.upcode}`;
-    if (!userStats[key]) {
-      userStats[key] = {
-        platform: user.platform,
-        upcode: user.upcode,
-        upname: upcodeMap[user.upcode] || '-',
+    const { platform, upcode, amount } = user;
+    const upname = upcodeMap[upcode] || upcode;
+
+    if (!platformMap[platform]) {
+      platformMap[platform] = {
+        platform,
+        regCount: 0,
+        payCount: 0,
+        payAmount: 0,
+        childrenMap: {}
+      };
+    }
+
+    // 一级聚合（平台级）
+    const plat = platformMap[platform];
+    plat.regCount += 1;
+    if (amount > 0) {
+      plat.payCount += 1;
+      plat.payAmount += amount;
+    }
+
+    // 二级聚合（上级代理）
+    if (!plat.childrenMap[upcode]) {
+      plat.childrenMap[upcode] = {
+        upcode,
+        upname,
         regCount: 0,
         payCount: 0,
         payAmount: 0
       };
     }
-    userStats[key].regCount += 1;
-    if (user.amount > 0) {
-      userStats[key].payCount += 1;
-      userStats[key].payAmount += user.amount;
+
+    const child = plat.childrenMap[upcode];
+    child.regCount += 1;
+    if (amount > 0) {
+      child.payCount += 1;
+      child.payAmount += amount;
     }
   }
+
+  // 转换结果为数组结构
+  const userStats = Object.values(platformMap).map(plat => {
+    return {
+      platform: plat.platform,
+      regCount: plat.regCount,
+      payCount: plat.payCount,
+      payAmount: plat.payAmount,
+      children: Object.values(plat.childrenMap)
+    };
+  });
 
   // ✅ 广告账号角度统计（ads 拆解后取下标为1）
   const accountStats = {};
@@ -358,7 +391,7 @@ export const getTodayStats = async ctx => {
     code: 0,
     message: 'ok',
     data: {
-      userStats: Object.values(userStats),
+      userStats,
       accountStats: Object.values(accountStats),
       postStats: Object.values(postStats)
     }
