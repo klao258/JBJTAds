@@ -12,6 +12,7 @@
     <n-card :title="v.platform" v-for="(v, k) in userStats" :key="k">
       <template #header-extra>注册总数：{{ v.regCount }}</template>
       <n-data-table
+        size="small"
         :columns="[
           { title: '名称', key: 'upname' },
           { title: '编码', key: 'upcode' },
