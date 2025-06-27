@@ -272,10 +272,13 @@ export const getAdsStatis = async ctx => {
 
 // 获取今日概览
 export const getTodayStats = async ctx => {
-  const { createDate } = ctx.query;
+  const { start, end } = ctx.query
+
+  const startDate = `${start} 00:00:00`
+  const endDate = `${end} 23:59:59`
 
   // 获取今日所有用户数据
-  const users = await User.find({ createDate: { $regex: `^${createDate}` } }).lean();
+  const users = await User.find({ createDate: { $gte: startDate, $lte: endDate } }).lean();
 
   // ✅ 用户角度统计
   const upcodeMap = {

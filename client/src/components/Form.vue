@@ -49,13 +49,24 @@
       </n-form-item>
 
       <!-- 创建时间 -->
-      <n-form-item v-if="fields.includes('createDate')" label="日期:" class="form-item-inline">
+      <n-form-item v-if="fields.includes('date')" label="日期:" class="form-item-inline">
         <n-date-picker
-          v-model:value="form.createDate"
+          v-model:value="form.date"
           value-format="yyyy.MM.dd"
           type="date"
           clearable
           @update:value="(value) => handleSearch()"
+        />
+      </n-form-item>
+
+      <!-- 日期范围 -->
+      <n-form-item v-if="fields.includes('dateRange')" label="日期:" class="form-item-inline">
+        <n-date-picker
+          v-model:value="form.dateRange"
+          type="daterange"
+          :shortcuts="rangeShortcuts"
+          :update-value-on-close="true"
+          @confirm="(value) => handleSearch(value)"
         />
       </n-form-item>
 
@@ -75,7 +86,7 @@
   const props = defineProps({
     fields: {
       type: Array,
-      default: () => ['platform', 'account', 'pcode', 'ads', 'createDate']
+      default: () => ['platform', 'account', 'pcode', 'ads', 'date', 'dateRange']
     }
   })
   
@@ -87,9 +98,15 @@
     account: '',
     pcode: '',
     ads: '',
-    createDate: new Date().getTime()
+    date: new Date().getTime(),
+    dateRange: [new Date().getTime(), new Date().getTime()]
   }
-  
+  const rangeShortcuts = reactive[{
+      近2小时: () => {
+        const cur = (new Date()).getTime();
+        return [cur - 2 * 60 * 60 * 1e3, cur];
+      }
+  }]
   const form = reactive({ ...initialForm })
 
   onMounted(() => {
@@ -150,12 +167,36 @@
     return `${y}-${m}-${d}`
   }
   
-  // 查询
-  const handleSearch = () => {
-    let params = JSON.parse(JSON.stringify(form))
-    const createDate = formatDate(params['createDate'] || '')
-    emit('search', {...params, createDate})
+  const debounce = (fn, delay = 300) => {
+    let timer = null
+    return function (...args) {
+      clearTimeout(timer)
+      timer = setTimeout(() => {
+        fn.apply(this, args)
+      }, delay)
+    }
   }
+
+  // 查询
+  const handleSearch = debounce(() => {
+    let params = {}
+    props.fields?.map?.(v => {
+      if(v === 'date'){
+        params[v] = formatDate(form[v] || '')
+      } else if (v === 'dateRange'){
+        const start = formatDate(form[v]?.[0] || '')
+        const end = formatDate(form[v]?.[1] || '')
+
+        if(!start?.length || !end?.length) return false
+
+        params['start'] = start
+        params['end'] = end
+      } else {
+        params[v] = form[v]
+      }
+    })
+    emit('search', params)
+  })
   
   // 重置
   const handleReset = () => {

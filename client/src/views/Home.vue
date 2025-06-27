@@ -1,6 +1,6 @@
 <template>
   <div class="page flex flex-v">
-    <SearchForm :fields="['createDate']" @search="onSearch" @reset="onSearch" />
+    <SearchForm :fields="['dateRange']" @search="onSearch" @reset="onSearch" />
     <div class="flex">
       <n-card :title="v.platform" v-for="(v, k) in userStats" :key="k">
         <template #header-extra>注册总数：{{ v.regCount }}</template>
