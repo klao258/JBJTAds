@@ -44,8 +44,9 @@
 
     <div class="flex flex-1">
       <n-card title="帖子统计">
-        <div style="height: 250px;">
+        <div style="height: 100%;">
           <n-data-table
+            style="height: 250px;"
             size="small"
             max-height="100%"
             :columns="[
