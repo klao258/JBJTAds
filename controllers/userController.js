@@ -311,7 +311,7 @@ export const getTodayStats = async ctx => {
     plat.regCount += 1;
     if (amount > 0) {
       plat.payCount += 1;
-      plat.payAmount += amount;
+      plat.payAmount = Number(plat.payAmount + amount).toFixed(2);
     }
 
     // 二级聚合（上级代理）
@@ -329,7 +329,7 @@ export const getTodayStats = async ctx => {
     child.regCount += 1;
     if (amount > 0) {
       child.payCount += 1;
-      child.payAmount += amount;
+      child.payAmount = Number(child.payAmount + amount).toFixed(2);
     }
   }
 
@@ -359,7 +359,7 @@ export const getTodayStats = async ctx => {
     accountStats[adsAccount].regCount += 1;
     if (user.amount > 0) {
       accountStats[adsAccount].payCount += 1;
-      accountStats[adsAccount].payAmount += user.amount;
+      accountStats[adsAccount].payAmount = Number(accountStats[adsAccount].payAmount + user.amount).toFixed(2);
     }
   }
 
@@ -386,7 +386,7 @@ export const getTodayStats = async ctx => {
     postStats[title].regCount += 1;
     if (user.amount > 0) {
       postStats[title].payCount += 1;
-      postStats[title].payAmount += user.amount;
+      postStats[title].payAmount = Number(postStats[title].payAmount + user.amount).toFixed(2);
     }
   }
 
