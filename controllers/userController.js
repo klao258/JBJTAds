@@ -272,10 +272,10 @@ export const getAdsStatis = async ctx => {
 
 // 获取今日概览
 export const getTodayStats = async ctx => {
-  const today = getNow()?.slice?.(0, 10); // 当前日期 YYYY-MM-DD
+  const { date } = ctx.query;
 
   // 获取今日所有用户数据
-  const users = await User.find({ createDate: { $regex: `^${today}` } }).lean();
+  const users = await User.find({ createDate: { $regex: `^${date}` } }).lean();
 
   // ✅ 用户角度统计
   const upcodeMap = {

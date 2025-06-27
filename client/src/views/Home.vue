@@ -1,12 +1,12 @@
 <template>
-  <!-- <div>
-    <SearchForm @search="onSearch" @reset="onSearch" />
-    <Table
+  <div>
+    <SearchForm :fields="['date']" @search="onSearch" @reset="onSearch" />
+    <!-- <Table
       :columns="columns"
       :data="tableData"
       :pagination="pagination"
-    />
-  </div> -->
+    /> -->
+  </div>
   <div class="page flex flex-v">
     <div class="flex">
       <n-card :title="v.platform" v-for="(v, k) in userStats" :key="k">
@@ -107,18 +107,8 @@ const accountStats = reactive([])
 const postStats = reactive([])
 
 onMounted(() => {
-  getTodayState()
+  onSearch()
 })
-
-const getTodayState = async () => {
-  let res = await fetch('/user/getTodayStats')
-      res = await res.json()
-  let data = res?.data || {}
-      userStats.splice(0, userStats.length, ...data?.userStats);
-      accountStats.splice(0, userStats.length, ...data?.accountStats)
-      postStats.splice(0, postStats.length, ...data?.postStats)
-  console.log(data)
-}
 
 const renderCell = (value, rowData, column) => {
   if(column.key === 'adsAccount'){
@@ -127,9 +117,15 @@ const renderCell = (value, rowData, column) => {
   return value
 }
 
-const onSearch = (payload) => {
-  console.log('搜索条件：', payload)
-  // 发请求
+const onSearch = (params) => {
+  const queryString = new URLSearchParams(params).toString();
+  let res = await fetch(`/user/getTodayStats?${queryString}`,)
+      res = await res.json()
+  let data = res?.data || {}
+      userStats.splice(0, userStats.length, ...data?.userStats);
+      accountStats.splice(0, userStats.length, ...data?.accountStats)
+      postStats.splice(0, postStats.length, ...data?.postStats)
+  console.log(data)
 }
 
 </script>

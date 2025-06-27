@@ -48,6 +48,17 @@
         />
       </n-form-item>
 
+      <!-- 创建时间 -->
+      <n-form-item v-if="fields.includes('date')" label="ads:" class="form-item-inline">
+        <n-date-picker
+          v-model:formatted-value="form.date"
+          value-format="yyyy.MM.dd"
+          type="date"
+          clearable
+          @update:value="handleSearch"
+        />
+      </n-form-item>
+
       <!-- 按钮区 -->
       <n-form-item class="form-item-inline">
         <n-button type="primary" @click="handleSearch">搜索</n-button>
@@ -64,7 +75,7 @@
   const props = defineProps({
     fields: {
       type: Array,
-      default: () => ['platform', 'account', 'pcode', 'ads']
+      default: () => ['platform', 'account', 'pcode', 'ads', 'date']
     }
   })
   
@@ -76,11 +87,39 @@
     platform: '',
     account: '',
     pcode: '',
-    ads: ''
+    ads: '',
+    date: getNow()
   }
   
   const form = reactive({ ...initialForm })
   
+  // 获取当前北京时间
+  const getNow = (offset = 0, format = 'YYYY-MM-DD') => {
+    const now = new Date();
+
+    // 转为 Asia/Shanghai 时区的本地时间
+    const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+    const targetTime = new Date(utc + 8 * 3600000 + offset * 86400000);
+
+    const pad = (n) => String(n).padStart(2, '0');
+
+    const year = targetTime.getFullYear();
+    const month = pad(targetTime.getMonth() + 1);
+    const day = pad(targetTime.getDate());
+    const hour = pad(targetTime.getHours());
+    const minute = pad(targetTime.getMinutes());
+    const second = pad(targetTime.getSeconds());
+
+    // 替换格式模板
+    return format
+      .replace('YYYY', year)
+      .replace('MM', month)
+      .replace('DD', day)
+      .replace('hh', hour)
+      .replace('mm', minute)
+      .replace('ss', second);
+  };
+
   // 平台
   const platformOptions = [
     { label: '请选择', value: '' },
