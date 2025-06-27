@@ -14,13 +14,9 @@ pipeline {
         stage('拉取代码') {
             steps {
                 echo '📥 拉取 GitHub 最新代码...'
+                sh 'sudo rm -rf client/dist/'
                 checkout scm
             }
-        }
-
-        steps {
-            sh 'rm -rf client/dist/'
-            checkout scm
         }
 
         stage('安装依赖') {
