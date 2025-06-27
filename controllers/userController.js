@@ -339,7 +339,7 @@ export const getTodayStats = async ctx => {
       platform: plat.platform,
       regCount: plat.regCount,
       payCount: plat.payCount,
-      payAmount: (plat.payAmount).toFixed(2),
+      payAmount: Number(plat.payAmount).toFixed(2),
       children: Object.values(plat.childrenMap)
     };
   });
