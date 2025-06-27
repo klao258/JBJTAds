@@ -44,11 +44,11 @@
 
     <div class="flex flex-1">
       <n-card title="帖子统计">
-        <div style="height: 100%;">
+        <div>
           <n-data-table
-            style="height: 250px;"
+            style="height: 100%;"
             size="small"
-            max-height="100%"
+            :max-height="300"
             :columns="[
               { title: '标题', key: 'title' },
               { title: '注册', key: 'regCount' },
