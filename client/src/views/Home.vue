@@ -47,6 +47,7 @@
         <n-data-table
           style="height: 100%;"
           size="small"
+          :max-height="'calc(100% - 40px)'"
           :columns="[
             { title: '标题', key: 'title' },
             { title: '注册', key: 'regCount' },
