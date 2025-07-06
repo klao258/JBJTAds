@@ -115,7 +115,7 @@ export const getAccoutPost = async ctx => {
               $cond: [{ $gt: ['$amount', 0] }, 1, 0]
             }
           },
-          money: { $sum: '$amount' }
+          money: { $round: [ { $sum: '$amount' }, 2 ] }
         }
       },
       {
