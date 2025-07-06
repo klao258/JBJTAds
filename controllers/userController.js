@@ -115,8 +115,8 @@ export const getAccoutPost = async ctx => {
               $cond: [{ $gt: ['$amount', 0] }, 1, 0]
             }
           },
-          money: { $round: [ { $sum: '$amount' }, 2 ] }
-        }
+          totalMoney: { $sum: '$amount' } // 第一步：先求总金额
+        },
       },
       {
         $project: {
@@ -124,7 +124,7 @@ export const getAccoutPost = async ctx => {
           ads: '$_id',
           regs: 1,
           pays: 1,
-          money: 1
+          money: { $round: ['$totalMoney', 2] } // 第二步：保留两位小数
         }
       },
       { $sort: { regs: -1 } } // 可选：按注册数倒序排序
