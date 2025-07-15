@@ -1,55 +1,60 @@
 <template>
   <div class="page flex flex-v">
     <SearchForm :fields="['dateRange']" @search="onSearch" @reset="onSearch" />
-    <div class="flex">
-      <n-card :title="v.platform" v-for="(v, k) in userStats" :key="k">
-        <template #header-extra>注册总数：{{ v.regCount }}</template>
-        <n-data-table
-          size="small"
-          :columns="[
-            { title: '名称', key: 'upname' },
-            { title: '编码', key: 'upcode' },
-            { title: '注册', key: 'regCount' },
-            { title: '付款', key: 'payCount' },
-            { title: '金额', key: 'payAmount' },
-          ]"
-          :data="v.children"
-        />
-      </n-card>
-    </div>
 
-    <div class="flex">
-      <n-card title="账号统计">
-        <n-data-table
-          size="small"
-          :max-height="300"
-          :columns="[
-            { title: '账号', key: 'adsAccount' },
-            { title: '注册', key: 'regCount' },
-            { title: '付款', key: 'payCount' },
-            { title: '金额', key: 'payAmount' },
-          ]"
-          :data="accountStats"
-          :render-cell="renderCell"
-        />
-      </n-card>
-    </div>
+    <div class="flex-1">
+      <n-tabs type="line" v-model:value="currentTab" animated style="height: 100%;" ref="postTableRef" >
+        <n-tab-pane name="platform" tab="平台统计" style="height: 100%; overflow: auto;">
+          <n-card class="flex-1" :title="v.platform" v-for="(v, k) in userStats" :key="k">
+            <template #header-extra>注册总数：{{ v.regCount }}</template>
+            <n-data-table
+              size="small"
+              :max-height="postTableHeight"
+              :columns="[
+                { title: '名称', key: 'upname' },
+                { title: '编码', key: 'upcode' },
+                { title: '注册', key: 'regCount' },
+                { title: '付款', key: 'payCount' },
+                { title: '金额', key: 'payAmount' },
+              ]"
+              :data="v.children"
+            />
+          </n-card>
+        </n-tab-pane>
 
-    <div class="flex flex-1" >
-      <n-card title="帖子统计">
-        <div style="height: 100%;" ref="postTableRef">
-          <n-data-table
-            size="small"
-            :max-height="postTableHeight"
-            :columns="[
-              { title: '标题', key: 'title' },
-              { title: '注册', key: 'regCount' },
-              { title: '付款', key: 'payCount' },
-              { title: '金额', key: 'payAmount' },
-            ]"
-            :data="postStats" />
-        </div>
-      </n-card>
+        <n-tab-pane name="account" tab="账号统计" style="height: 100%;">
+          <n-card title="">
+            <n-data-table
+              size="small"
+              :max-height="postTableHeight"
+              :columns="[
+                { title: '账号', key: 'adsAccount' },
+                { title: '注册', key: 'regCount' },
+                { title: '付款', key: 'payCount' },
+                { title: '金额', key: 'payAmount' },
+              ]"
+              :data="accountStats"
+              :render-cell="renderCell"
+            />
+          </n-card>
+        </n-tab-pane>
+
+        <n-tab-pane name="post" tab="帖子统计" style="height: 100%;">
+          <n-card title="">
+            <n-data-table
+              size="small"
+              :max-height="postTableHeight"
+              :columns="[
+                { title: '标题', key: 'title' },
+                { title: '注册', key: 'regCount' },
+                { title: '付款', key: 'payCount' },
+                { title: '金额', key: 'payAmount' },
+              ]"
+              :data="postStats"
+            />
+          </n-card>
+        </n-tab-pane>
+      </n-tabs>
     </div>
   </div>
 </template>
@@ -57,6 +62,8 @@
 <script setup>
 import SearchForm from '@/components/Form.vue'
 import { getTodayStats } from '@/api'
+
+const currentTab = ref('platform')
 
 const account = {
   ZhaoShang: '金貝招商',
@@ -91,10 +98,11 @@ const postTableHeight = ref(400) // 默认高度
 const setPostTableHeight = async () => {
   await nextTick() // 确保 DOM 已渲染
   if (postTableRef.value) {
-    const height = postTableRef.value.clientHeight
-    postTableHeight.value = height - 40 // 自定义偏移，例如减去表头高度
+    const height = postTableRef.value?.$el?.clientHeight
+    postTableHeight.value = height - 42 - 12 - 40 - 20 // 自定义偏移，例如减去表头高度
   }
 }
+
 
 // 格式化单元格数据
 const renderCell = (value, rowData, column) => {
@@ -110,6 +118,8 @@ const onSearch = async (params) => {
   userStats.splice(0, userStats.length, ...res?.userStats);
   accountStats.splice(0, accountStats.length, ...res?.accountStats)
   postStats.splice(0, postStats.length, ...res?.postStats)
+
+  setPostTableHeight()
 }
 </script>
 

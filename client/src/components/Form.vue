@@ -245,21 +245,21 @@
   
   // 重置
   const handleReset = () => {
-    let params = {...form}
+    let params = {}
     props.fields?.map?.(v => {
+      form[v] = initialForm[v]
       if(v === 'date'){
-        params[v] = formatDate(form[v] || '')
+        params[v] = formatDate(initialForm[v] || '')
       } else if (v === 'dateRange'){
-        const start = formatDate(form[v]?.[0] || '')
-        const end = formatDate(form[v]?.[1] || '')
+        const start = formatDate(initialForm[v]?.[0] || '')
+        const end = formatDate(initialForm[v]?.[1] || '')
 
         if(!start?.length || !end?.length) return false
 
         params['start'] = start
         params['end'] = end
-        delete params[v]
       } else {
-        params[v] = form[v]
+        params[v] = initialForm[v]
       }
     })
     emit('reset', params)

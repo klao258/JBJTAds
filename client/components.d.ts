@@ -25,6 +25,8 @@ declare module 'vue' {
     NLayoutSiderHeader: typeof import('naive-ui')['NLayoutSiderHeader']
     NMenu: typeof import('naive-ui')['NMenu']
     NSelect: typeof import('naive-ui')['NSelect']
+    NTabPane: typeof import('naive-ui')['NTabPane']
+    NTabs: typeof import('naive-ui')['NTabs']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     Table: typeof import('./src/components/Table.vue')['default']

@@ -35,17 +35,20 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:3002',
+        // target: 'http://localhost:3002',
+        target: 'https://jbjtads.sso66s.cc',
         changeOrigin: true,
         secure: false,
       },
       '/ads': {
-        target: 'http://localhost:3002',
+        // target: 'http://localhost:3002',
+        target: 'https://jbjtads.sso66s.cc',
         changeOrigin: true,
         secure: false,
       },
       '/user': {
-        target: 'http://localhost:3002',
+        // target: 'http://localhost:3002',
+        target: 'https://jbjtads.sso66s.cc',
         changeOrigin: true,
         secure: false,
       }
