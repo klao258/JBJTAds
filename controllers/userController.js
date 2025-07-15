@@ -293,10 +293,8 @@ export const getTodayStats = async ctx => {
 
   // 先聚合：platform => 子 upcode 映射
   const platformMap = {};
-
   for (const user of users) {
-    const { platform, upcode, amount } = user;
-    const upname = upcodeMap[upcode] || upcode;
+    const { platform, upcode, upname, amount } = user;
 
     if (!platformMap[platform]) {
       platformMap[platform] = {
