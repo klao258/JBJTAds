@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken'
 const ACCESS_SECRET = 'jbjt-access-secret'
 const REFRESH_SECRET = 'jbjt-refresh-secret'
 
-export const generateAccessToken = (payload, expiresIn = '30m') =>
+export const generateAccessToken = (payload, expiresIn = '1d') =>
   jwt.sign(payload, ACCESS_SECRET, { expiresIn })
 
 export const generateRefreshToken = (payload, expiresIn = '7d') =>
