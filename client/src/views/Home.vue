@@ -56,6 +56,7 @@
 
 <script setup>
 import SearchForm from '@/components/Form.vue'
+import { getTodayStats } from '@/api'
 
 const account = {
   ZhaoShang: '金貝招商',
@@ -105,18 +106,11 @@ const renderCell = (value, rowData, column) => {
 
 // 获取数据
 const onSearch = async (params) => {
-  const queryString = new URLSearchParams(params).toString();
-  let res = await fetch(`/user/getTodayStats?${queryString}`)
-      res = await res.json()
-  let data = res?.data || {}
-      userStats.splice(0, userStats.length, ...data?.userStats);
-      accountStats.splice(0, accountStats.length, ...data?.accountStats)
-      postStats.splice(0, postStats.length, ...data?.postStats)
-
-  await setPostTableHeight()
-  console.log(data)
+  let res = await getTodayStats(params)
+  userStats.splice(0, userStats.length, ...res?.userStats);
+  accountStats.splice(0, accountStats.length, ...res?.accountStats)
+  postStats.splice(0, postStats.length, ...res?.postStats)
 }
-
 </script>
 
 <style scoped>

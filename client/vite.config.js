@@ -34,13 +34,18 @@ export default defineConfig({
   },
   server: {
     proxy: {
+      '/api': {
+        target: 'http://localhost:3002',
+        changeOrigin: true,
+        secure: false,
+      },
       '/ads': {
-        target: 'https://jbjtads.sso66s.cc',
+        target: 'http://localhost:3002',
         changeOrigin: true,
         secure: false,
       },
       '/user': {
-        target: 'https://jbjtads.sso66s.cc',
+        target: 'http://localhost:3002',
         changeOrigin: true,
         secure: false,
       }

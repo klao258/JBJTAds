@@ -121,7 +121,11 @@
         return [first, last];
     }
   })
-  const form = reactive({ ...initialForm })
+
+
+  let formField = {}
+  props.fields.map(v => formField[v] = initialForm[v])
+  const form = reactive({ ...formField })
 
   onMounted(() => {
     handleSearch()
@@ -231,6 +235,7 @@
 
         params['start'] = start
         params['end'] = end
+        delete params[v]
       } else {
         params[v] = form[v]
       }
@@ -240,8 +245,24 @@
   
   // 重置
   const handleReset = () => {
-    Object.assign(form, { ...initialForm })
-    emit('reset', { ...form })
+    let params = {...form}
+    props.fields?.map?.(v => {
+      if(v === 'date'){
+        params[v] = formatDate(form[v] || '')
+      } else if (v === 'dateRange'){
+        const start = formatDate(form[v]?.[0] || '')
+        const end = formatDate(form[v]?.[1] || '')
+
+        if(!start?.length || !end?.length) return false
+
+        params['start'] = start
+        params['end'] = end
+        delete params[v]
+      } else {
+        params[v] = form[v]
+      }
+    })
+    emit('reset', params)
   }
   </script>
   

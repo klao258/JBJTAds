@@ -14,7 +14,11 @@
   "dependencies": {
     "@koa/cors": "^5.0.0",
     "@vicons/ionicons5": "^0.13.0",
+    "axios": "^1.10.0",
+    "bcryptjs": "^3.0.2",
+    "crypto": "^1.0.1",
     "dotenv": "^16.5.0",
+    "jsonwebtoken": "^9.0.2",
     "koa": "^2.14.2",
     "koa-bodyparser": "^4.3.0",
     "koa-router": "^10.1.1",
