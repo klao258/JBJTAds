@@ -1,5 +1,5 @@
 import mongoose from 'mongoose'
-import { generateShortIdFromString } from '../utils/shortId'
+import { generateShortIdFromString } from '../utils/shortId.js'
 
 const channelSchema = new mongoose.Schema({
   title: { type: String, required: true },

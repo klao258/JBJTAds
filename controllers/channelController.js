@@ -1,4 +1,4 @@
-import Channel from '../models/channel'
+import Channel from '../models/channel.js'
 
 // 登录接口
 export const getChannelList = async (ctx) => {
