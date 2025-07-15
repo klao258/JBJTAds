@@ -1,3 +1,5 @@
+import mongoose from 'mongoose'
+
 // 频道、机器人、群类型
 const channelTypeSchema = new mongoose.Schema({
   name: { type: String, required: true, unique: true },

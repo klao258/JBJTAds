@@ -24,7 +24,16 @@ export const routes = [
           icon: HomeOutline, 
           requiresAuth: true  
         }
-      }
+      }, { 
+        path: '/channel', 
+        name: 'Channel',
+        component: () => import('@/views/Channel.vue'),
+        meta: { 
+          title: '频道管理', 
+          icon: HomeOutline, 
+          requiresAuth: true  
+        }
+      },
     ]
   }
 ]
