@@ -338,8 +338,10 @@ export const getTodayStats = async ctx => {
   const accountStats = {};
   for (const user of users) {
     const dashCount = (user.ads.match(/-/g) || []).length
-    if(/ads/i.test(user.ads)) return false // 没有ADS标识的跳过
-    if(dashCount < 2) return false  // 确保 ads 至少有两个部分, 之前的旧数据是ADS-code
+    // 没有ADS标识的跳过, ads 至少有两个部分, 之前的旧数据是ADS-code
+    if(!/ads/i.test(user.ads) || dashCount < 2) {
+      continue
+    } 
     
     const adsAccount = user.ads?.split('-')?.[1] || '未知';
     if (!accountStats[adsAccount]) {
