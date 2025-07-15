@@ -281,16 +281,6 @@ export const getTodayStats = async ctx => {
   const users = await User.find({ createDate: { $gte: startDate, $lte: endDate } }).lean();
 
   // ✅ 用户角度统计
-  const upcodeMap = {
-    '53377': 'A仔',
-    '64777': '光头',
-    '64782': '光头',
-    '59970': '光头(大号)',
-    '22782': '安仔',
-    '22780': '大山',
-    '68661': '八哥'
-  };
-
   // 先聚合：platform => 子 upcode 映射
   const platformMap = {};
   for (const user of users) {
@@ -347,6 +337,10 @@ export const getTodayStats = async ctx => {
   // ✅ 广告账号角度统计（ads 拆解后取下标为1）
   const accountStats = {};
   for (const user of users) {
+    const dashCount = (user.ads.match(/-/g) || []).length
+    if(/ads/i.test(user.ads)) return false // 没有ADS标识的跳过
+    if(dashCount < 2) return false  // 确保 ads 至少有两个部分, 之前的旧数据是ADS-code
+    
     const adsAccount = user.ads?.split('-')?.[1] || '未知';
     if (!accountStats[adsAccount]) {
       accountStats[adsAccount] = {
