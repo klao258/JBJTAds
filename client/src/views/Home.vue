@@ -29,6 +29,7 @@
               :max-height="postTableHeight"
               :columns="[
                 { title: '账号', key: 'adsAccount' },
+                { title: '平台', key: 'platform' },
                 { title: '注册', key: 'regCount' },
                 { title: '付款', key: 'payCount' },
                 { title: '金额', key: 'payAmount' },

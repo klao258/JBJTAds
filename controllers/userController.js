@@ -344,9 +344,13 @@ export const getTodayStats = async ctx => {
     } 
     
     const adsAccount = user.ads?.split('-')?.[1] || '未知';
+    if (adsAccount === 'null') {
+      continue; // 跳过没有 adsAccount 的用户
+    }
     if (!accountStats[adsAccount]) {
       accountStats[adsAccount] = {
         adsAccount,
+        platform: user.platform,
         regCount: 0,
         payCount: 0,
         payAmount: 0
