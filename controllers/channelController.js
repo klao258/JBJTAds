@@ -91,71 +91,53 @@ export const getChannelList = async (ctx) => {
 		shortId,
 		typeId,
 		page = 1,
-		pageSize = 50,
+		pageSize = 10,
 	} = ctx.query;
 
-	// 过滤频道列表
-	let filteredChannels = channels;
+	// 构造查询条件
+	const query = {};
 
 	if (title) {
-		filteredChannels = filteredChannels.filter((channel) =>
-			channel.title.includes(title)
-		);
+		query.title = { $regex: title, $options: 'i' }; // 模糊查询
 	}
 
 	if (description) {
-		filteredChannels = filteredChannels.filter((channel) =>
-			channel.description.includes(description)
-		);
+		query.description = { $regex: description, $options: 'i' }; // 模糊查询
 	}
 
 	if (sourceType) {
-		filteredChannels = filteredChannels.filter(
-			(channel) => channel.sourceType === sourceType
-		);
+		query.sourceType = sourceType;
 	}
 
 	if (isAdvertised !== undefined) {
-		filteredChannels = filteredChannels.filter(
-			(channel) => channel.isAdvertised === Number(isAdvertised)
-		);
+		query.isAdvertised = Number(isAdvertised);
 	}
 
 	if (hasOrders !== undefined) {
-		filteredChannels = filteredChannels.filter(
-			(channel) => channel.hasOrders === Number(hasOrders)
-		);
+		query.hasOrders = Number(hasOrders);
 	}
 
 	if (url) {
-		filteredChannels = filteredChannels.filter((channel) =>
-			channel.url.includes(url)
-		);
+		query.url = { $regex: url, $options: 'i' }; // 模糊查询
 	}
 
 	if (grade) {
-		filteredChannels = filteredChannels.filter(
-			(channel) => channel.grade === grade
-		);
+		query.grade = grade;
 	}
 
 	if (shortId) {
-		filteredChannels = filteredChannels.filter(
-			(channel) => channel.shortId === shortId
-		);
+		query.shortId = shortId;
 	}
 
 	if (typeId) {
-		filteredChannels = filteredChannels.filter(
-			(channel) => channel.typeId.$oid === typeId
-		);
+		query.typeId = typeId; // 假设 typeId 是 ObjectId 类型
 	}
 
 	// 分页处理
-	const total = filteredChannels.length;
-	const startIndex = (page - 1) * pageSize;
-	const endIndex = startIndex + Number(pageSize);
-	const results = filteredChannels.slice(startIndex, endIndex);
+	const total = await Channel.countDocuments(query);
+	const channels = await Channel.find(query)
+		.skip((page - 1) * pageSize)
+		.limit(Number(pageSize));
 
 	ctx.body = {
 		code: 0,
@@ -164,7 +146,7 @@ export const getChannelList = async (ctx) => {
 			total,
 			page,
 			pageSize,
-			data: results,
+			data: channels,
 		},
 	};
 };
