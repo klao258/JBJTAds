@@ -1,9 +1,10 @@
 import Channel from '../models/channel.js'
+import ChannelType from '../models/channelType.js'
 
 // 获取频道类型
 export const getChannelType = async (ctx) => {
     try {
-        const channelTypes = await Channel.find(); // 查询所有通道类型
+        const channelTypes = await ChannelType.find(); // 查询所有通道类型
         ctx.body = {
             code: 0,
             message: 'ok',
