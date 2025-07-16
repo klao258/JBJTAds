@@ -81,45 +81,90 @@ export const batchAddChannel = async (ctx) => {
 // 获取频道列表
 export const getChannelList = async (ctx) => {
 	const {
-		page = 1,
-		pageSize = 10,
 		title,
+		description,
 		sourceType,
 		isAdvertised,
+		hasOrders,
+		url,
+		grade,
+		shortId,
+		typeId,
+		page = 1,
+		pageSize = 50,
 	} = ctx.query;
 
-	// 构造查询条件
-	const query = {};
+	// 过滤频道列表
+	let filteredChannels = channels;
+
 	if (title) {
-		query.title = { $regex: title, $options: 'i' }; // 模糊匹配，忽略大小写
-	}
-	if (sourceType && ['bot', 'channel', 'group'].includes(sourceType)) {
-		query.sourceType = sourceType;
-	}
-	if (typeof isAdvertised !== 'undefined') {
-		if (isAdvertised === 'true') query.isAdvertised = true;
-		else if (isAdvertised === 'false') query.isAdvertised = false;
+		filteredChannels = filteredChannels.filter((channel) =>
+			channel.title.includes(title)
+		);
 	}
 
-	const pageNum = Math.max(parseInt(page), 1);
-	const sizeNum = Math.min(Math.max(parseInt(pageSize), 1), 100);
+	if (description) {
+		filteredChannels = filteredChannels.filter((channel) =>
+			channel.description.includes(description)
+		);
+	}
 
-	// 查询总数
-	const total = await Channel.countDocuments(query);
+	if (sourceType) {
+		filteredChannels = filteredChannels.filter(
+			(channel) => channel.sourceType === sourceType
+		);
+	}
 
-	// 查询数据，按创建时间倒序分页
-	const channels = await Channel.find(query)
-		.sort({ createdAt: -1 })
-		.skip((pageNum - 1) * sizeNum)
-		.limit(sizeNum)
-		.lean();
+	if (isAdvertised !== undefined) {
+		filteredChannels = filteredChannels.filter(
+			(channel) => channel.isAdvertised === Number(isAdvertised)
+		);
+	}
+
+	if (hasOrders !== undefined) {
+		filteredChannels = filteredChannels.filter(
+			(channel) => channel.hasOrders === Number(hasOrders)
+		);
+	}
+
+	if (url) {
+		filteredChannels = filteredChannels.filter((channel) =>
+			channel.url.includes(url)
+		);
+	}
+
+	if (grade) {
+		filteredChannels = filteredChannels.filter(
+			(channel) => channel.grade === grade
+		);
+	}
+
+	if (shortId) {
+		filteredChannels = filteredChannels.filter(
+			(channel) => channel.shortId === shortId
+		);
+	}
+
+	if (typeId) {
+		filteredChannels = filteredChannels.filter(
+			(channel) => channel.typeId.$oid === typeId
+		);
+	}
+
+	// 分页处理
+	const total = filteredChannels.length;
+	const startIndex = (page - 1) * pageSize;
+	const endIndex = startIndex + Number(pageSize);
+	const results = filteredChannels.slice(startIndex, endIndex);
 
 	ctx.body = {
 		code: 0,
 		message: 'ok',
 		data: {
 			total,
-			channels,
+			page,
+			pageSize,
+			data: results,
 		},
 	};
 };
