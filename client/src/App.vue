@@ -40,6 +40,9 @@ const themeOverrides = {
 .flex-between{
   justify-content: space-between;
 }
+.flex-end{
+  justify-content: flex-end;
+}
 
 .page{
   height: 100% !important;

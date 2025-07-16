@@ -1,44 +1,43 @@
 <template>
-    <n-card title="频道管理">
-      <div class="filter-bar" style="display:flex; gap:16px; margin-bottom:16px;">
-        <n-input
-          v-model:value="filters.title"
-          placeholder="频道标题模糊搜索"
-          clearable
-          style="width: 250px;"
-        />
-        <n-select
-          v-model:value="filters.sourceType"
-          :options="sourceTypeOptions"
-          placeholder="选择来源类型"
-          clearable
-          style="width: 150px;"
-        />
-        <n-checkbox v-model:value="filters.isAdvertised" label="只显示已推广" />
-        <n-button @click="fetchChannels" type="primary">搜索</n-button>
-        <n-button @click="resetFilters">重置</n-button>
-      </div>
-  
-      <n-data-table
-        :columns="columns"
-        :data="channels"
-        :pagination="{ page: pagination.page, pageSize: pagination.pageSize, itemCount: total }"
-        @update:page="page => { pagination.page = page; fetchChannels() }"
-        @update:pageSize="pageSize => { pagination.pageSize = pageSize; fetchChannels() }"
-        :loading="loading"
-        row-key="_id"
+    <div class="filter-bar" style="display:flex; gap:16px; margin-bottom:16px;">
+      <n-input
+        v-model:value="filters.title"
+        placeholder="频道标题模糊搜索"
+        clearable
+        style="width: 250px;"
       />
-    </n-card>
+      <n-select
+        v-model:value="filters.sourceType"
+        :options="sourceTypeOptions"
+        placeholder="选择来源类型"
+        clearable
+        style="width: 150px;"
+      />
+      <!-- <n-checkbox v-model:value="filters.isAdvertised" label="只显示已推广" /> -->
+
+      <n-button @click="getChannelListFn" type="primary">搜索</n-button>
+      <n-button @click="resetFilters">重置</n-button>
+      <AddChannel />
+    </div>
+
+    <n-data-table
+      :columns="columns"
+      :data="channels"
+      :pagination="{ page: pagination.page, pageSize: pagination.pageSize, itemCount: total }"
+      @update:page="page => { pagination.page = page; getChannelListFn() }"
+      @update:pageSize="pageSize => { pagination.pageSize = pageSize; getChannelListFn() }"
+      :loading="loading"
+      :row-key="(row) => row.shortId" />
   </template>
   
   <script setup>
-  import { ref, reactive, onMounted } from 'vue'
-  import { NCard, NInput, NSelect, NCheckbox, NButton, NDataTable } from 'naive-ui'
-  import axios from 'axios'
-  
+  import AddChannel from '@/components/AddChannel.vue';
+  import { getChannelList } from '@/api'
+
+const showModal = ref(false);
   const filters = reactive({
     title: '',
-    sourceType: '',
+    sourceType: 'bot',
     isAdvertised: false
   })
   
@@ -49,19 +48,26 @@
   ]
   
   const columns = [
-    { title: '标题', key: 'title', ellipsis: true },
-    { title: '描述', key: 'description', ellipsis: true },
-    { title: '订阅数', key: 'subscribers' },
-    { title: '来源类型', key: 'sourceType', render(row) {
+    { title: '频道ID', key: 'shortId', ellipsis: true },
+    { title: 'TG类型', key: 'sourceType', render(row) {
         const map = { bot: '机器人', channel: '频道', group: '群组' }
         return map[row.sourceType] || row.sourceType
       }
     },
+    { title: '频道类型', key: 'typeId', ellipsis: true },
+    { title: '标题', key: 'title', ellipsis: true },
+    { title: '描述', key: 'description', ellipsis: true },
+    { title: '订阅数', key: 'subscribers' },
+    { title: '链接', key: 'url' },
     { title: '是否推广', key: 'isAdvertised', render(row) {
         return row.isAdvertised ? '是' : '否'
       }
     },
-    { title: '创建时间', key: 'createdAt', render(row) {
+    { title: '是否出单', key: 'hasOrders', render(row) {
+        return row.isAdvertised ? '是' : '否'
+      }
+    },
+    { title: '收录时间', key: 'createdAt', render(row) {
         return new Date(row.createdAt).toLocaleString()
       }
     }
@@ -74,8 +80,12 @@
     page: 1,
     pageSize: 10
   })
+
+  onMounted(() => {
+    getChannelListFn()
+  })
   
-  async function fetchChannels() {
+  const getChannelListFn = async () => {
     loading.value = true
     try {
       // 构造查询参数
@@ -87,9 +97,9 @@
       if (filters.sourceType) params.sourceType = filters.sourceType
       if (filters.isAdvertised) params.isAdvertised = true
   
-      const res = await axios.get('/api/channels', { params })
-      channels.value = res.data.channels
-      total.value = res.data.total
+      const res = await getChannelList(params)
+      channels.value = res.channels
+      total.value = res.total
     } catch (error) {
       console.error('获取频道列表失败', error)
     } finally {
@@ -97,16 +107,16 @@
     }
   }
   
-  function resetFilters() {
+  const resetFilters = () => {
     filters.title = ''
     filters.sourceType = ''
     filters.isAdvertised = false
     pagination.page = 1
-    fetchChannels()
+    getChannelListFn()
   }
-  
-  onMounted(() => {
-    fetchChannels()
-  })
+
+  const addChannel = () => {
+
+  }
   </script>
   

@@ -11,3 +11,12 @@ export const logout = token => post('/api/auth/logout', { refreshToken: token })
 
 // 获取今日概览数据
 export const getTodayStats = p => get('/user/getTodayStats', p)
+
+// 获取行业分类
+export const getChannelType = () => get('/api/channel/types')
+
+// 获取频道列表
+export const getChannelList = p => get('/api/channel/list', p)
+
+// 批量添加频道
+export const addChannels = data => post('/api/channel/batch', data)

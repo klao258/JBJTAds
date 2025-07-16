@@ -1,6 +1,24 @@
 import Channel from '../models/channel.js'
 
-// 登录接口
+// 获取频道类型
+export const getChannelType = async (ctx) => {
+    try {
+        const channelTypes = await Channel.find(); // 查询所有通道类型
+        ctx.body = {
+            code: 0,
+            message: 'ok',
+            data: {
+                channelTypes
+            }
+        }
+    } catch (error) {
+        console.error("查询错误: ", error);
+        ctx.status = 500; // 设置 HTTP 状态码
+        ctx.body = { message: '服务器内部错误' }; // 返回错误信息
+    }
+}
+
+// 获取频道列表
 export const getChannelList = async (ctx) => {
     const { page = 1, pageSize = 10, title, sourceType, isAdvertised } = ctx.query
       
