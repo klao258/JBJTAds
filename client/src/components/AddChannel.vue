@@ -8,24 +8,22 @@
 			v-model:show="showModal"
 			title="表格数据"
 			:auto-focus="false"
-			@close="resetData"
-		>
+			@close="resetData">
 			<n-card style="width: 98%">
 				<n-data-table
 					v-if="tableData.length"
 					:columns="columns"
 					:data="tableData"
 					:max-height="600"
-					:row-key="(row) => row.url"
-				/>
+					:row-key="(row) => row.url" />
 				<p v-else>没有数据显示</p>
 				<template #action>
 					<div class="flex flex-between flex-center-y">
 						<div>共{{ tableData.length - 1 }}条数据</div>
 						<div class="flex flex-end">
-							<n-button type="primary" @click="addChannelFn"
-								>开始添加</n-button
-							>
+							<n-button type="primary" @click="addChannelFn">
+								开始添加
+							</n-button>
 							<n-button @click="showModal = false">关闭</n-button>
 						</div>
 					</div>
