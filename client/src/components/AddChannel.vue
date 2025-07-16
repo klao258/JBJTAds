@@ -38,7 +38,10 @@
 <script setup>
 import * as XLSX from 'xlsx';
 import { NSelect } from 'naive-ui';
-import { onMounted, ref } from 'vue';
+import { batchAddChannels } from '@/api';
+import { useMessage } from 'naive-ui';
+
+const message = useMessage();
 
 const props = defineProps({
 	channelType: {
@@ -218,9 +221,6 @@ const onFileChange = ({ file }) => {
 				}, {});
 			});
 
-			console.log('表格数据:', tableData.value);
-
-			// 自动打开模态框
 			showModal.value = true;
 		};
 
@@ -241,9 +241,19 @@ const addChannelFn = async () => {
 	if (tableData.value.length === 0) return;
 
 	// 这里可以添加逻辑来处理添加频道的操作
-	console.log('开始添加频道:', tableData.value);
+	const res = await batchAddChannels(tableData.value);
+
+	message.success(
+		`操作完成，成功${res.successList.length}条，失败${res.failedList.length}条`
+	);
 
 	// 关闭模态框
 	showModal.value = false;
 };
 </script>
+
+<style scoped>
+:deep(.n-upload-file-list) {
+	display: none;
+}
+</style>
