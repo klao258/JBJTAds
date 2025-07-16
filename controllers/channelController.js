@@ -39,17 +39,13 @@ export const batchAddChannel = async (ctx) => {
 	const existingChannels = await Channel.find(
 		{
 			url: {
-				$in: channelDataArray.map(
-					(channel) => new RegExp(`^${channel.url}$`, 'i')
-				),
+				$in: channelDataArray.map((channel) => new RegExp(`^${channel.url}$`, 'i')),
 			},
 		},
 		'url'
 	).lean();
 
-	const existingUrlsSet = new Set(
-		existingChannels.map((channel) => channel.url.toLowerCase())
-	); // 将 URL 转换为小写以便比较
+	const existingUrlsSet = new Set(existingChannels.map((channel) => channel.url.toLowerCase())); // 将 URL 转换为小写以便比较
 
 	// 批量添加频道数据
 	for (const channelData of channelDataArray) {
@@ -80,19 +76,7 @@ export const batchAddChannel = async (ctx) => {
 
 // 获取频道列表
 export const getChannelList = async (ctx) => {
-	const {
-		title,
-		description,
-		sourceType,
-		isAdvertised,
-		hasOrders,
-		url,
-		grade,
-		shortId,
-		typeId,
-		page = 1,
-		pageSize = 10,
-	} = ctx.query;
+	const { title, description, sourceType, isAdvertised, hasOrders, url, grade, shortId, typeId, page = 1, pageSize = 10 } = ctx.query;
 
 	// 构造查询条件
 	const query = {};
