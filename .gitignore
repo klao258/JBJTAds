@@ -5,6 +5,7 @@ node_modules/
 .vscode/
 .idea/
 .DS_Store
+.prettierrc
 
 # PM2
 pids/
