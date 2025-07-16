@@ -15,7 +15,7 @@
 					v-if="tableData.length"
 					:columns="columns"
 					:data="tableData"
-					:max-height="400"
+					:max-height="600"
 					:row-key="(row) => row.url"
 				/>
 				<p v-else>没有数据显示</p>
