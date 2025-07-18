@@ -193,14 +193,23 @@ const onFileChange = ({ file }) => {
 			const worksheet = workbook.Sheets[firstSheetName];
 
 			const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-			columns.value = jsonData[0].map((item) => {
-				const column = columnsObj[item] || {
-					title: item,
-					key: item,
-					ellipsis: true,
-				};
-				return column;
-			});
+			columns.value = [
+				{
+					title: '#',
+					key: 'id',
+					align: 'center',
+					width: 40,
+					render: (row, index) => index + 1,
+				},
+				...jsonData[0].map((item) => {
+					const column = columnsObj[item] || {
+						title: item,
+						key: item,
+						ellipsis: true,
+					};
+					return column;
+				}),
+			];
 
 			tableData.value = jsonData.slice(1).map((row) => {
 				return row.reduce((acc, value, index) => {
