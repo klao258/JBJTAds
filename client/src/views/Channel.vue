@@ -157,7 +157,7 @@ const pagination = reactive({
 
 // 列配置
 const columns = ref([
-	{ title: '频道ID', key: 'shortId', width: 65 },
+	{ title: '频道ID', key: 'shortId', width: 70 },
 	{
 		title: 'TG类型',
 		key: 'sourceType',
