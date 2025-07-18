@@ -1,100 +1,104 @@
 <template>
-	<div
-		class="filter-bar flex flex-center-y"
-		style="
-			gap: 12px;
-			margin-bottom: 10px;
-			padding-bottom: 10px;
-			border-bottom: 1px solid #f7f7f7;
-		">
-		<div class="flex flex-center-y">
-			<span>标题：</span>
-			<n-input
-				v-model:value="filters.title"
-				placeholder="标题搜索"
-				clearable
-				size="small"
-				style="width: 120px"
-				@update:value="getChannelListFn" />
+	<div class="flex flex-v" style="height: 100%">
+		<div
+			class="filter-bar flex flex-center-y"
+			style="
+				gap: 12px;
+				margin-bottom: 10px;
+				padding-bottom: 10px;
+				border-bottom: 1px solid #f7f7f7;
+			">
+			<div class="flex flex-center-y">
+				<span>标题：</span>
+				<n-input
+					v-model:value="filters.title"
+					placeholder="标题搜索"
+					clearable
+					size="small"
+					style="width: 120px"
+					@update:value="getChannelListFn" />
+			</div>
+
+			<div class="flex flex-center-y">
+				<span>用户名：</span>
+				<n-input
+					v-model:value="filters.url"
+					placeholder="用户名搜索"
+					clearable
+					size="small"
+					style="width: 120px"
+					@update:value="getChannelListFn" />
+			</div>
+
+			<div class="flex flex-center-y">
+				<span>类型：</span>
+				<n-select
+					v-model:value="filters.sourceType"
+					:options="sourceTypeOptions"
+					size="small"
+					placeholder="选择来源类型"
+					clearable
+					style="width: 120px"
+					@update:value="getChannelListFn" />
+			</div>
+
+			<div class="flex flex-center-y">
+				<span>行业类型：</span>
+				<n-select
+					v-model:value="filters.typeId"
+					:options="channelType"
+					size="small"
+					placeholder="选择行业"
+					clearable
+					:consistent-menu-width="false"
+					style="width: 120px"
+					@update:value="getChannelListFn" />
+			</div>
+
+			<div class="flex flex-center-y">
+				<span>等级：</span>
+				<n-select
+					v-model:value="filters.grade"
+					:options="gradeTypes"
+					size="small"
+					placeholder="选择等级"
+					clearable
+					style="width: 90px"
+					@update:value="getChannelListFn" />
+			</div>
+
+			<n-checkbox
+				v-model:checked="filters.isAdvertised"
+				label="未投放"
+				:checked-value="0"
+				:unchecked-value="null"
+				@update:checked="getChannelListFn" />
+
+			<n-checkbox
+				v-model:checked="filters.hasOrders"
+				label="已出单"
+				:checked-value="1"
+				:unchecked-value="null"
+				@update:checked="getChannelListFn" />
+
+			<n-button size="small" @click="getChannelListFn" type="primary">搜索</n-button>
+			<n-button size="small" @click="resetFilters">重置</n-button>
+			<AddChannel :channelType="channelType" />
 		</div>
 
-		<div class="flex flex-center-y">
-			<span>用户名：</span>
-			<n-input
-				v-model:value="filters.url"
-				placeholder="用户名搜索"
-				clearable
-				size="small"
-				style="width: 120px"
-				@update:value="getChannelListFn" />
-		</div>
-
-		<div class="flex flex-center-y">
-			<span>类型：</span>
-			<n-select
-				v-model:value="filters.sourceType"
-				:options="sourceTypeOptions"
-				size="small"
-				placeholder="选择来源类型"
-				clearable
-				style="width: 120px"
-				@update:value="getChannelListFn" />
-		</div>
-
-		<div class="flex flex-center-y">
-			<span>行业类型：</span>
-			<n-select
-				v-model:value="filters.typeId"
-				:options="channelType"
-				size="small"
-				placeholder="选择行业"
-				clearable
-				:consistent-menu-width="false"
-				style="width: 120px"
-				@update:value="getChannelListFn" />
-		</div>
-
-		<div class="flex flex-center-y">
-			<span>等级：</span>
-			<n-select
-				v-model:value="filters.grade"
-				:options="gradeTypes"
-				size="small"
-				placeholder="选择等级"
-				clearable
-				style="width: 90px"
-				@update:value="getChannelListFn" />
-		</div>
-
-		<n-checkbox
-			v-model:checked="filters.isAdvertised"
-			label="未投放"
-			:checked-value="0"
-			:unchecked-value="null"
-			@update:checked="getChannelListFn" />
-
-		<n-checkbox
-			v-model:checked="filters.hasOrders"
-			label="已出单"
-			:checked-value="1"
-			:unchecked-value="null"
-			@update:checked="getChannelListFn" />
-
-		<n-button size="small" @click="getChannelListFn" type="primary">搜索</n-button>
-		<n-button size="small" @click="resetFilters">重置</n-button>
-		<AddChannel :channelType="channelType" />
+		<n-data-table
+			class="flex-1"
+			:columns="columns"
+			:data="tableData"
+			size="small"
+			:bordered="false"
+			:single-line="false"
+			:pagination="pagination"
+			:loading="loading"
+			:remote="true"
+			max-height="calc(100vh - 49px - 40px - 35px)"
+			:row-key="(row) => row.shortId" />
 	</div>
-
-	<n-data-table
-		:columns="columns"
-		:data="tableData"
-		size="small"
-		:bordered="false"
-		:single-line="false"
-		:pagination="pagination"
-		:loading="loading"
-		:remote="true"
-		:row-key="(row) => row.shortId" />
 </template>
 
 <script setup>
@@ -137,9 +141,9 @@ const filters = reactive({
 });
 const pagination = reactive({
 	page: 1,
-	pageSize: 50,
+	pageSize: 100,
 	showSizePicker: true,
-	pageSizes: [10, 50, 100, 200],
+	pageSizes: [50, 100, 200],
 	itemCount: 0,
 	prefix({ itemCount }) {
 		return `共有 ${itemCount} 条`;
@@ -157,18 +161,19 @@ const pagination = reactive({
 
 // 列配置
 const columns = ref([
+	{ title: '#', key: 'id', align: 'center', width: 35, render: (row, index) => index + 1 },
 	{ title: '频道ID', key: 'shortId', width: 70 },
 	{
 		title: 'TG类型',
 		key: 'sourceType',
 		ellipsis: { tooltip: true },
-		width: 100,
+		width: 85,
 		render(row, index) {
 			return h(ShowOrEdit, {
 				editType: 'select',
 				value: row.sourceType,
 				options: sourceTypeOptions,
-				style: { width: '90px' },
+				style: { width: '75px' },
 				onUpdateValue: (v) => (tableData.value[index].sourceType = v),
 			});
 		},
@@ -177,13 +182,13 @@ const columns = ref([
 		title: '行业类型',
 		key: 'typeId',
 		ellipsis: { tooltip: true },
-		width: 120,
+		width: 150,
 		render(row, index) {
 			return h(ShowOrEdit, {
 				editType: 'select',
 				value: row.typeId,
 				options: channelType.value,
-				style: { width: '110px' },
+				style: { width: '140px' },
 				onUpdateValue: (v) => (tableData.value[index].typeId = v),
 			});
 		},

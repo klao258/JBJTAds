@@ -62,4 +62,7 @@ const themeOverrides = {
 .n-data-table .n-data-table-td {
 	padding: 4px;
 }
+.n-data-table .n-data-table__pagination {
+	margin: 0;
+}
 </style>

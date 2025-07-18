@@ -47,6 +47,13 @@ const showModal = ref(false);
 const tableData = ref([]);
 const columns = ref([]);
 const columnsObj = {
+	id: {
+		title: '#',
+		key: 'id',
+		align: 'center',
+		width: 40,
+		render: (row, index) => index + 1,
+	},
 	sourceType: {
 		title: 'TG类型',
 		key: 'sourceType',
