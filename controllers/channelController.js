@@ -76,7 +76,19 @@ export const batchAddChannel = async (ctx) => {
 
 // 获取频道列表
 export const getChannelList = async (ctx) => {
-	const { title, description, sourceType, isAdvertised, hasOrders, url, grade, shortId, typeId, page = 1, pageSize = 10 } = ctx.query;
+	const {
+		title,
+		description,
+		sourceType,
+		isAdvertised,
+		hasOrders,
+		url,
+		grade,
+		shortId,
+		typeId,
+		page = 1,
+		pageSize = 10,
+	} = ctx.query;
 
 	// 构造查询条件
 	const query = {};

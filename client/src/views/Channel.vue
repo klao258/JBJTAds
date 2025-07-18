@@ -1,36 +1,139 @@
 <template>
-	<div class="filter-bar" style="display: flex; gap: 16px; margin-bottom: 16px">
-		<n-input v-model:value="filters.title" placeholder="频道标题模糊搜索" clearable style="width: 250px" />
-		<n-select v-model:value="filters.sourceType" :options="sourceTypeOptions" placeholder="选择来源类型" clearable style="width: 150px" />
+	<div
+		class="filter-bar flex flex-center-y"
+		style="
+			gap: 12px;
+			margin-bottom: 10px;
+			padding-bottom: 10px;
+			border-bottom: 1px solid #f7f7f7;
+		">
+		<div class="flex flex-center-y">
+			<span>标题：</span>
+			<n-input
+				v-model:value="filters.title"
+				placeholder="标题搜索"
+				clearable
+				size="small"
+				style="width: 120px"
+				@update:value="getChannelListFn" />
+		</div>
 
-		<!-- <n-checkbox v-model:value="filters.isAdvertised" label="只显示已推广" /> -->
+		<div class="flex flex-center-y">
+			<span>用户名：</span>
+			<n-input
+				v-model:value="filters.url"
+				placeholder="用户名搜索"
+				clearable
+				size="small"
+				style="width: 120px"
+				@update:value="getChannelListFn" />
+		</div>
 
-		<n-button @click="getChannelListFn" type="primary">搜索</n-button>
-		<n-button @click="resetFilters">重置</n-button>
+		<div class="flex flex-center-y">
+			<span>类型：</span>
+			<n-select
+				v-model:value="filters.sourceType"
+				:options="sourceTypeOptions"
+				size="small"
+				placeholder="选择来源类型"
+				clearable
+				style="width: 120px"
+				@update:value="getChannelListFn" />
+		</div>
+
+		<div class="flex flex-center-y">
+			<span>行业类型：</span>
+			<n-select
+				v-model:value="filters.typeId"
+				:options="channelType"
+				size="small"
+				placeholder="选择行业"
+				clearable
+				:consistent-menu-width="false"
+				style="width: 120px"
+				@update:value="getChannelListFn" />
+		</div>
+
+		<div class="flex flex-center-y">
+			<span>等级：</span>
+			<n-select
+				v-model:value="filters.grade"
+				:options="gradeTypes"
+				size="small"
+				placeholder="选择等级"
+				clearable
+				style="width: 90px"
+				@update:value="getChannelListFn" />
+		</div>
+
+		<n-checkbox
+			v-model:checked="filters.isAdvertised"
+			label="未投放"
+			:checked-value="0"
+			:unchecked-value="null"
+			@update:checked="getChannelListFn" />
+
+		<n-checkbox
+			v-model:checked="filters.hasOrders"
+			label="已出单"
+			:checked-value="1"
+			:unchecked-value="null"
+			@update:checked="getChannelListFn" />
+
+		<n-button size="small" @click="getChannelListFn" type="primary">搜索</n-button>
+		<n-button size="small" @click="resetFilters">重置</n-button>
 		<AddChannel :channelType="channelType" />
 	</div>
 
-	<n-data-table :columns="columns" :data="channels" :pagination="pagination" :loading="loading" :remote="true" :row-key="(row) => row.shortId" />
+	<n-data-table
+		:columns="columns"
+		:data="tableData"
+		size="small"
+		:bordered="false"
+		:single-line="false"
+		:pagination="pagination"
+		:loading="loading"
+		:remote="true"
+		:row-key="(row) => row.shortId" />
 </template>
 
 <script setup>
+import { NInput, NSelect } from 'naive-ui';
 import AddChannel from '@/components/AddChannel.vue';
+import ShowOrEdit from '@/components/ShowOrEdit.js';
 import { getChannelType, getChannelList } from '@/api';
 
+// TG类型
 const sourceTypeOptions = [
-	{ label: '全部', value: '' },
 	{ label: '机器人', value: '机器人' },
 	{ label: '频道', value: '频道' },
 	{ label: '群组', value: '群组' },
 ];
+
+// 评级
+const gradeTypes = [
+	{ label: 'A+', value: 'A+' },
+	{ label: 'A', value: 'A' },
+	{ label: 'B+', value: 'B+' },
+	{ label: 'B', value: 'B' },
+	{ label: 'C+', value: 'C+' },
+	{ label: 'C', value: 'C' },
+	{ label: 'D+', value: 'D+' },
+	{ label: 'D', value: 'D' },
+];
+
 const channelType = ref([]);
-const channels = ref([]);
+const tableData = ref([]);
 const total = ref(0);
 const loading = ref(false);
 const filters = reactive({
 	title: '', // 频道标题模糊搜索
-	sourceType: '', // 来源类型
-	isAdvertised: null, // 是否推广
+	url: '', // 用户名模糊搜索
+	sourceType: null, // TG类型
+	typeId: null, // 行业类型ID
+	grade: null, // 等级筛选
+	isAdvertised: null, // 未推广
+	hasOrders: null, // 未推广
 });
 const pagination = reactive({
 	page: 1,
@@ -52,16 +155,37 @@ const pagination = reactive({
 	},
 });
 
+// 列配置
 const columns = ref([
-	{ title: '频道ID', key: 'shortId', ellipsis: true, width: 80 },
-	{ title: 'TG类型', key: 'sourceType', ellipsis: true, width: 80 },
+	{ title: '频道ID', key: 'shortId', width: 65 },
+	{
+		title: 'TG类型',
+		key: 'sourceType',
+		ellipsis: { tooltip: true },
+		width: 100,
+		render(row, index) {
+			return h(ShowOrEdit, {
+				editType: 'select',
+				value: row.sourceType,
+				options: sourceTypeOptions,
+				style: { width: '90px' },
+				onUpdateValue: (v) => (tableData.value[index].sourceType = v),
+			});
+		},
+	},
 	{
 		title: '行业类型',
 		key: 'typeId',
-		ellipsis: true,
+		ellipsis: { tooltip: true },
 		width: 120,
-		render(row) {
-			return channelType.value.find((item) => item.value === row.typeId)?.label || '-';
+		render(row, index) {
+			return h(ShowOrEdit, {
+				editType: 'select',
+				value: row.typeId,
+				options: channelType.value,
+				style: { width: '110px' },
+				onUpdateValue: (v) => (tableData.value[index].typeId = v),
+			});
 		},
 	},
 	{ title: '标题', key: 'title', ellipsis: true, width: 200 },
@@ -69,59 +193,107 @@ const columns = ref([
 		title: '订阅数',
 		key: 'subscribers',
 		width: 85,
-		sorter: {
-			compare: (a, b) => a.subscribers - b.subscribers,
+		sorter: (row1, row2) => +row1.subscribers - +row2.subscribers,
+		render(row, index) {
+			return h(ShowOrEdit, {
+				editType: 'input',
+				value: String(row.subscribers),
+				style: { width: '75px' },
+				onUpdateValue: (v) => (tableData.value[index].subscribers = v),
+			});
 		},
 	},
 	{
 		title: '用户名',
 		key: 'url',
-		width: 130,
-		render(row) {
-			return h(
+		width: 120,
+		ellipsis: { tooltip: true },
+		render: (row) =>
+			h(
 				'a',
 				{
+					directives: [{ name: 'copy' }],
 					href: row['url'],
 					target: '_blank',
 					rel: 'noopener noreferrer',
 				},
 				'@' + row['url']?.replace(/https\:\/\/t.me\//, '')
-			);
+			),
+	},
+	{
+		title: '等级',
+		key: 'grade',
+		align: 'center',
+		width: 65,
+		render(row, index) {
+			return h(ShowOrEdit, {
+				editType: 'select',
+				value: row.grade,
+				options: gradeTypes,
+				style: { width: '55px' },
+				onUpdateValue: (v) => (tableData.value[index].grade = v),
+			});
 		},
 	},
 	{
-		title: '是否推广',
+		title: '已投放',
 		key: 'isAdvertised',
-		width: 80,
+		width: 60,
 		align: 'center',
-		render(row) {
-			return row.isAdvertised ? '是' : '否';
+		render(row, index) {
+			return h(ShowOrEdit, {
+				editType: 'select',
+				value: row.isAdvertised,
+				options: [
+					{ label: '是', value: 1 },
+					{ label: '否', value: 0 },
+				],
+				style: { width: '55px' },
+				onUpdateValue: (v) => (tableData.value[index].isAdvertised = v),
+			});
 		},
 	},
 	{
-		title: '是否出单',
+		title: '已出单',
 		key: 'hasOrders',
-		width: 80,
+		width: 60,
 		align: 'center',
-		render(row) {
-			return row.hasOrders ? '是' : '否';
+		render(row, index) {
+			return h(ShowOrEdit, {
+				editType: 'select',
+				value: row.hasOrders,
+				options: [
+					{ label: '是', value: 1 },
+					{ label: '否', value: 0 },
+				],
+				style: { width: '55px' },
+				onUpdateValue: (v) => (tableData.value[index].hasOrders = v),
+			});
 		},
 	},
 	{
 		title: '收录时间',
 		key: 'createdAt',
 		width: 150,
-		render(row) {
-			return new Date(row.createdAt).toLocaleString();
-		},
+		render: (row) => new Date(row.createdAt).toLocaleString(),
 	},
-	{ title: '描述', key: 'description', ellipsis: true },
+	{ title: '描述', key: 'description', ellipsis: { tooltip: true } },
 ]);
 
 onMounted(async () => {
 	await getChannelTypeFn();
 	await getChannelListFn();
 });
+
+// 获取行业分类
+const getChannelTypeFn = async () => {
+	const res = await getChannelType();
+	channelType.value =
+		res?.channelTypes?.map?.((item) => ({
+			label: item.name,
+			value: item._id,
+		})) || [];
+};
 
 // 获取频道列表
 const getChannelListFn = async () => {
@@ -133,11 +305,15 @@ const getChannelListFn = async () => {
 			pageSize: pagination.pageSize,
 		};
 		if (filters.title) params.title = filters.title;
+		if (filters.url) params.url = filters.url;
 		if (filters.sourceType) params.sourceType = filters.sourceType;
-		if (filters.isAdvertised) params.isAdvertised = true;
+		if (filters.typeId) params.typeId = filters.typeId;
+		if (filters.grade) params.grade = filters.grade;
+		if (filters.isAdvertised !== null) params.isAdvertised = filters.isAdvertised;
+		if (filters.hasOrders !== null) params.hasOrders = filters.hasOrders;
 
 		const res = await getChannelList(params);
-		channels.value = res.data || [];
+		tableData.value = res.data || [];
 		total.value = res.total;
 
 		pagination.itemCount = res.total;
@@ -150,20 +326,15 @@ const getChannelListFn = async () => {
 
 // 重置过滤条件
 const resetFilters = () => {
-	filters.title = '';
-	filters.sourceType = '';
-	filters.isAdvertised = false;
+	filters.title = ''; // 频道标题模糊搜索
+	filters.url = ''; // 用户名模糊搜索
+	filters.sourceType = null; // TG类型
+	filters.typeId = null; // 行业类型ID
+	filters.grade = null; // 等级筛选
+	filters.isAdvertised = null; // 未推广
+	filters.hasOrders = null; // 未推广
+
 	pagination.page = 1;
 	getChannelListFn();
-};
-
-// 获取行业分类
-const getChannelTypeFn = async () => {
-	const res = await getChannelType();
-	channelType.value =
-		res?.channelTypes?.map?.((item) => ({
-			label: item.name,
-			value: item._id,
-		})) || [];
 };
 </script>

@@ -1,9 +1,5 @@
 <template>
-	<n-config-provider
-		:locale="zhCN"
-		:date-locale="dateZhCN"
-		:theme-overrides="themeOverrides"
-	>
+	<n-config-provider :locale="zhCN" :date-locale="dateZhCN" :theme-overrides="themeOverrides">
 		<n-message-provider>
 			<router-view />
 		</n-message-provider>
@@ -17,7 +13,7 @@ const themeOverrides = {
 	common: {},
 	Card: {
 		titleTextColor: '#42b983', // 设置标题文字颜色
-		paddingMedium: '5px 10px', // 修改默认中等尺寸 padding
+		paddingMedium: '0', // 修改默认中等尺寸 padding
 	},
 };
 </script>
@@ -53,10 +49,17 @@ const themeOverrides = {
 .page {
 	height: 100% !important;
 }
+/** 卡片 */
 .n-card-header__extra {
 	color: red !important;
 }
 .n-card > .n-card__content {
 	overflow: hidden;
+}
+
+/** 数据表格 */
+.n-data-table .n-data-table-th,
+.n-data-table .n-data-table-td {
+	padding: 4px;
 }
 </style>
