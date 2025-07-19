@@ -98,7 +98,8 @@
 			:loading="loading"
 			:remote="true"
 			max-height="calc(100vh - 49px - 40px - 35px)"
-			:row-key="(row) => row.shortId" />
+			:row-key="(row) => row.shortId"
+			@update:sorter="handleSort" />
 	</div>
 </template>
 
@@ -133,6 +134,7 @@ const gradeTypes = [
 
 const channelType = ref([]);
 const tableData = ref([]);
+const tableDataCopy = ref([]);
 const total = ref(0);
 const loading = ref(false);
 const filters = reactive({
@@ -350,6 +352,7 @@ const getChannelListFn = async () => {
 
 		const res = await getChannelList(params);
 		tableData.value = res.data || [];
+		tableDataCopy.value = JSON.parse(JSON.stringify(res?.data || []));
 		total.value = res.total;
 
 		pagination.itemCount = res.total;
@@ -387,6 +390,22 @@ const copyAllUrls = async () => {
 	} catch {
 		message.error('复制失败，请手动复制');
 	}
+};
+
+// 排序
+const handleSort = (sorter) => {
+	const { columnKey, order } = sorter;
+	if (!order) {
+		// 恢复原始顺序
+		tableData.value = [...tableDataCopy.value];
+		return;
+	}
+
+	tableData.value.sort((a, b) => {
+		const v1 = +a['subscribers'];
+		const v2 = +b['subscribers'];
+		return order === 'ascend' ? v1 - v2 : v2 - v1;
+	});
 };
 
 // 编辑行
