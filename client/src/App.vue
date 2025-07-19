@@ -70,4 +70,7 @@ const themeOverrides = {
 .n-data-table .n-data-table__pagination {
 	margin: 0;
 }
+.v-binder-follower-container {
+	width: 40%;
+}
 </style>
