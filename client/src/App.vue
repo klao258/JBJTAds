@@ -60,7 +60,12 @@ const themeOverrides = {
 /** 数据表格 */
 .n-data-table .n-data-table-th,
 .n-data-table .n-data-table-td {
+	user-select: none;
 	padding: 4px;
+}
+/* 仅允许 url 列文本可选 */
+.n-data-table td:nth-child(7) {
+	user-select: text;
 }
 .n-data-table .n-data-table__pagination {
 	margin: 0;

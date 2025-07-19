@@ -84,6 +84,7 @@
 			<n-button size="small" @click="getChannelListFn" type="primary">搜索</n-button>
 			<n-button size="small" @click="resetFilters">重置</n-button>
 			<AddChannel :channelType="channelType" />
+			<n-button size="small" type="primary" @click="copyAllUrls">复制全部链接</n-button>
 		</div>
 
 		<n-data-table
@@ -107,6 +108,9 @@ import AddChannel from '@/components/AddChannel.vue';
 import ShowOrEdit from '@/components/ShowOrEdit.js';
 import { getChannelType, getChannelList } from '@/api';
 import CopyText from '@/components/CopyText.vue';
+import { useMessage } from 'naive-ui';
+
+const message = useMessage();
 
 // TG类型
 const sourceTypeOptions = [
@@ -350,5 +354,20 @@ const resetFilters = () => {
 
 	pagination.page = 1;
 	getChannelListFn();
+};
+
+// 复制所有链接
+const copyAllUrls = async () => {
+	const allUrls = tableData.value.map((item) => item.url).join('\n');
+	if (!allUrls) {
+		message.warning('表格无链接可复制');
+		return;
+	}
+	try {
+		await navigator.clipboard.writeText(allUrls);
+		message.success('全部链接复制成功');
+	} catch {
+		message.error('复制失败，请手动复制');
+	}
 };
 </script>
