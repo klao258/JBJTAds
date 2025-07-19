@@ -9,7 +9,7 @@
 				border-bottom: 1px solid #f7f7f7;
 			">
 			<div class="flex flex-center-y">
-				<span>标题：</span>
+				<span v-copy>标题：</span>
 				<n-input
 					v-model:value="filters.title"
 					placeholder="标题搜索"
@@ -106,6 +106,7 @@ import { NInput, NSelect } from 'naive-ui';
 import AddChannel from '@/components/AddChannel.vue';
 import ShowOrEdit from '@/components/ShowOrEdit.js';
 import { getChannelType, getChannelList } from '@/api';
+import CopyText from '@/components/CopyText.vue';
 
 // TG类型
 const sourceTypeOptions = [
@@ -162,7 +163,14 @@ const pagination = reactive({
 // 列配置
 const columns = ref([
 	{ title: '#', key: 'id', align: 'center', width: 35, render: (row, index) => index + 1 },
-	{ title: '频道ID', key: 'shortId', width: 70 },
+	{
+		title: '频道ID',
+		key: 'shortId',
+		width: 70,
+		render(row) {
+			return h(CopyText, { text: row.shortId });
+		},
+	},
 	{
 		title: 'TG类型',
 		key: 'sourceType',
@@ -213,17 +221,18 @@ const columns = ref([
 		key: 'url',
 		width: 120,
 		ellipsis: { tooltip: true },
-		render: (row) =>
-			h(
+		render(row) {
+			return h(
 				'a',
 				{
-					directives: [{ name: 'copy' }],
-					href: row['url'],
+					href: row.url,
 					target: '_blank',
 					rel: 'noopener noreferrer',
+					style: 'color: #1890ff',
 				},
-				'@' + row['url']?.replace(/https\:\/\/t.me\//, '')
-			),
+				[h(CopyText, { text: row.url }, () => row.url.replace('https://t.me/', '@'))]
+			);
+		},
 	},
 	{
 		title: '等级',
