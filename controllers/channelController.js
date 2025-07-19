@@ -146,3 +146,67 @@ export const getChannelList = async (ctx) => {
 		},
 	};
 };
+
+// 批量更新频道
+export const batchUpdateChannel = async (ctx) => {
+	const channels = ctx.request.body; // 获取请求体中的频道数组
+
+	if (!Array.isArray(channels) || channels.length === 0) {
+		ctx.body = {
+			code: 1,
+			message: '请求体必须是一个非空频道数组',
+		};
+		return;
+	}
+
+	try {
+		const updatedChannels = [];
+
+		for (const channelData of channels) {
+			const {
+				shortId,
+				title,
+				description,
+				subscribers,
+				url,
+				typeId,
+				sourceType,
+				grade,
+				isAdvertised,
+				hasOrders,
+			} = channelData;
+
+			// 查找频道并更新
+			const channel = await Channel.findOne({ shortId });
+
+			if (channel) {
+				// 只在频道存在时进行更新
+				channel.title = title;
+				channel.description = description;
+				channel.subscribers = subscribers;
+				channel.url = url;
+				channel.typeId = typeId;
+				channel.sourceType = sourceType;
+				channel.grade = grade;
+				channel.isAdvertised = isAdvertised;
+				channel.hasOrders = hasOrders;
+				channel.updatedAt = new Date(); // 更新修改时间
+
+				await channel.save(); // 保存更新
+				updatedChannels.push(channel);
+			}
+		}
+
+		ctx.body = {
+			code: 0,
+			message: '频道信息更新成功',
+			channels: updatedChannels,
+		};
+	} catch (error) {
+		ctx.body = {
+			code: 1,
+			message: '更新失败',
+			error: error.message,
+		};
+	}
+};

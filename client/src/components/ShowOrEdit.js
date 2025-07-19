@@ -81,8 +81,8 @@ export default defineComponent({
 								consistentMenuWidth: false,
 								onUpdateValue: (v) => {
 									selectVale.value = v;
+									handleChange();
 								},
-								onBlur: handleChange,
 						  })
 						: props.options.find((item) => item.value === props.value)?.label || '-'
 				);

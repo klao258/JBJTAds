@@ -106,7 +106,7 @@
 import { NInput, NSelect } from 'naive-ui';
 import AddChannel from '@/components/AddChannel.vue';
 import ShowOrEdit from '@/components/ShowOrEdit.js';
-import { getChannelType, getChannelList } from '@/api';
+import { getChannelType, getChannelList, batchUpdateChannels } from '@/api';
 import CopyText from '@/components/CopyText.vue';
 import { useMessage } from 'naive-ui';
 
@@ -186,7 +186,10 @@ const columns = ref([
 				value: row.sourceType,
 				options: sourceTypeOptions,
 				style: { width: '75px' },
-				onUpdateValue: (v) => (tableData.value[index].sourceType = v),
+				onUpdateValue: (v) => {
+					tableData.value[index].sourceType = v;
+					onEditRow(tableData.value[index]);
+				},
 			});
 		},
 	},
@@ -201,7 +204,10 @@ const columns = ref([
 				value: row.typeId,
 				options: channelType.value,
 				style: { width: '140px' },
-				onUpdateValue: (v) => (tableData.value[index].typeId = v),
+				onUpdateValue: (v) => {
+					tableData.value[index].typeId = v;
+					onEditRow(tableData.value[index]);
+				},
 			});
 		},
 	},
@@ -216,7 +222,10 @@ const columns = ref([
 				editType: 'input',
 				value: String(row.subscribers),
 				style: { width: '75px' },
-				onUpdateValue: (v) => (tableData.value[index].subscribers = v),
+				onUpdateValue: (v) => {
+					tableData.value[index].subscribers = v;
+					onEditRow(tableData.value[index]);
+				},
 			});
 		},
 	},
@@ -249,7 +258,10 @@ const columns = ref([
 				value: row.grade,
 				options: gradeTypes,
 				style: { width: '55px' },
-				onUpdateValue: (v) => (tableData.value[index].grade = v),
+				onUpdateValue: (v) => {
+					tableData.value[index].grade = v;
+					onEditRow(tableData.value[index]);
+				},
 			});
 		},
 	},
@@ -267,7 +279,10 @@ const columns = ref([
 					{ label: '否', value: 0 },
 				],
 				style: { width: '55px' },
-				onUpdateValue: (v) => (tableData.value[index].isAdvertised = v),
+				onUpdateValue: (v) => {
+					tableData.value[index].isAdvertised = v;
+					onEditRow(tableData.value[index]);
+				},
 			});
 		},
 	},
@@ -285,7 +300,10 @@ const columns = ref([
 					{ label: '否', value: 0 },
 				],
 				style: { width: '55px' },
-				onUpdateValue: (v) => (tableData.value[index].hasOrders = v),
+				onUpdateValue: (v) => {
+					tableData.value[index].hasOrders = v;
+					onEditRow(tableData.value[index]);
+				},
 			});
 		},
 	},
@@ -369,5 +387,11 @@ const copyAllUrls = async () => {
 	} catch {
 		message.error('复制失败，请手动复制');
 	}
+};
+
+// 编辑行
+const onEditRow = async (row) => {
+	const res = await batchUpdateChannels([row]);
+	message.success('更新成功！');
 };
 </script>
