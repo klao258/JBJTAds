@@ -60,7 +60,7 @@ export default defineComponent({
 									inputValue.value = v;
 								},
 								onChange: handleChange,
-								onBlur: handleChange,
+								onBlur: () => (isEdit.value = false),
 						  })
 						: props.value
 				);
@@ -79,12 +79,15 @@ export default defineComponent({
 								options: props.options,
 								size: 'tiny',
 								consistentMenuWidth: false,
+								onBlur: () => (isEdit.value = false),
 								onUpdateValue: (v) => {
 									selectVale.value = v;
 									handleChange();
 								},
 						  })
-						: props.options.find((item) => item.value === props.value)?.label || '-'
+						: props.options
+								.find((item) => item.value === props.value)
+								?.label?.replace(/否/, '')
 				);
 			}
 		};

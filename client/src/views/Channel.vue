@@ -280,7 +280,7 @@ const columns = ref([
 					{ label: '是', value: 1 },
 					{ label: '否', value: 0 },
 				],
-				style: { width: '55px' },
+				style: { width: '55px', minHeight: '22px' },
 				onUpdateValue: (v) => {
 					tableData.value[index].isAdvertised = v;
 					onEditRow(tableData.value[index]);
@@ -301,7 +301,7 @@ const columns = ref([
 					{ label: '是', value: 1 },
 					{ label: '否', value: 0 },
 				],
-				style: { width: '55px' },
+				style: { width: '55px', minHeight: '22px' },
 				onUpdateValue: (v) => {
 					tableData.value[index].hasOrders = v;
 					onEditRow(tableData.value[index]);
