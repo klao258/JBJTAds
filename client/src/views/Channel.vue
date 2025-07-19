@@ -16,7 +16,7 @@
 					clearable
 					size="small"
 					style="width: 120px"
-					@update:value="getChannelListFn" />
+					@update:value="() => getChannelListFn(1)" />
 			</div>
 
 			<div class="flex flex-center-y">
@@ -27,7 +27,7 @@
 					clearable
 					size="small"
 					style="width: 120px"
-					@update:value="getChannelListFn" />
+					@update:value="() => getChannelListFn(1)" />
 			</div>
 
 			<div class="flex flex-center-y">
@@ -39,7 +39,7 @@
 					placeholder="选择来源类型"
 					clearable
 					style="width: 120px"
-					@update:value="getChannelListFn" />
+					@update:value="() => getChannelListFn(1)" />
 			</div>
 
 			<div class="flex flex-center-y">
@@ -52,7 +52,7 @@
 					clearable
 					:consistent-menu-width="false"
 					style="width: 120px"
-					@update:value="getChannelListFn" />
+					@update:value="() => getChannelListFn(1)" />
 			</div>
 
 			<div class="flex flex-center-y">
@@ -64,7 +64,7 @@
 					placeholder="选择等级"
 					clearable
 					style="width: 90px"
-					@update:value="getChannelListFn" />
+					@update:value="() => getChannelListFn(1)" />
 			</div>
 
 			<n-checkbox
@@ -72,16 +72,16 @@
 				label="未投放"
 				:checked-value="0"
 				:unchecked-value="null"
-				@update:checked="getChannelListFn" />
+				@update:checked="() => getChannelListFn(1)" />
 
 			<n-checkbox
 				v-model:checked="filters.hasOrders"
 				label="已出单"
 				:checked-value="1"
 				:unchecked-value="null"
-				@update:checked="getChannelListFn" />
+				@update:checked="() => getChannelListFn(1)" />
 
-			<n-button size="small" @click="getChannelListFn" type="primary">搜索</n-button>
+			<n-button size="small" @click="() => getChannelListFn(1)" type="primary">搜索</n-button>
 			<n-button size="small" @click="resetFilters">重置</n-button>
 			<AddChannel :channelType="channelType" />
 			<n-button size="small" type="primary" @click="copyAllUrls">复制全部链接</n-button>
@@ -334,7 +334,10 @@ const getChannelTypeFn = async () => {
 };
 
 // 获取频道列表
-const getChannelListFn = async () => {
+const getChannelListFn = async (page) => {
+	if (page) {
+		pagination.page = page;
+	}
 	loading.value = true;
 	try {
 		// 构造查询参数
