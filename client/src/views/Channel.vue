@@ -234,7 +234,7 @@ const columns = ref([
 	{
 		title: '用户名',
 		key: 'url',
-		width: 120,
+		width: 135,
 		ellipsis: { tooltip: true },
 		render(row) {
 			return h(
