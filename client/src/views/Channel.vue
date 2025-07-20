@@ -416,7 +416,7 @@ const getChannelListFn = async (page) => {
 		if (filters.sourceType) params.sourceType = filters.sourceType;
 		if (filters.typeId) params.typeId = filters.typeId;
 		if (filters.grade) params.grade = filters.grade;
-		if (filters.isPlace) params.isPlace = filters.isPlace;
+		if (filters.isPlace !== null) params.isPlace = filters.isPlace;
 		if (filters.isAdvertised !== null) params.isAdvertised = filters.isAdvertised;
 		if (filters.hasOrders !== null) params.hasOrders = filters.hasOrders;
 
