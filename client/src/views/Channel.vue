@@ -187,7 +187,7 @@ const columns = ref([
 				editType: 'select',
 				value: row.sourceType,
 				options: sourceTypeOptions,
-				style: { width: '75px' },
+				style: { width: '75px', minHeight: '22px' },
 				onUpdateValue: (v) => {
 					tableData.value[index].sourceType = v;
 					onEditRow(tableData.value[index]);
@@ -205,7 +205,7 @@ const columns = ref([
 				editType: 'select',
 				value: row.typeId,
 				options: channelType.value,
-				style: { width: '140px' },
+				style: { width: '140px', minHeight: '22px' },
 				onUpdateValue: (v) => {
 					tableData.value[index].typeId = v;
 					onEditRow(tableData.value[index]);
@@ -223,7 +223,7 @@ const columns = ref([
 			return h(ShowOrEdit, {
 				editType: 'input',
 				value: String(row.subscribers),
-				style: { width: '75px' },
+				style: { width: '75px', minHeight: '22px' },
 				onUpdateValue: (v) => {
 					tableData.value[index].subscribers = v;
 					onEditRow(tableData.value[index]);
@@ -259,7 +259,7 @@ const columns = ref([
 				editType: 'select',
 				value: row.grade,
 				options: gradeTypes,
-				style: { width: '55px' },
+				style: { width: '55px', minHeight: '22px' },
 				onUpdateValue: (v) => {
 					tableData.value[index].grade = v;
 					onEditRow(tableData.value[index]);
