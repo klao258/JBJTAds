@@ -1,13 +1,24 @@
 <template>
 	<div class="flex flex-v" style="height: 100%">
 		<div
-			class="filter-bar flex flex-center-y"
+			class="filter-bar flex flex-wrap flex-center-y"
 			style="
 				gap: 12px;
 				margin-bottom: 10px;
 				padding-bottom: 10px;
 				border-bottom: 1px solid #f7f7f7;
 			">
+			<div class="flex flex-center-y">
+				<span v-copy>shortId：</span>
+				<n-input
+					v-model:value="filters.shortId"
+					placeholder="shortId搜索"
+					clearable
+					size="small"
+					style="width: 120px"
+					@update:value="() => getChannelListFn(1)" />
+			</div>
+
 			<div class="flex flex-center-y">
 				<span v-copy>标题：</span>
 				<n-input
@@ -67,19 +78,50 @@
 					@update:value="() => getChannelListFn(1)" />
 			</div>
 
-			<n-checkbox
-				v-model:checked="filters.isAdvertised"
-				label="未投放"
-				:checked-value="0"
-				:unchecked-value="null"
-				@update:checked="() => getChannelListFn(1)" />
+			<div class="flex flex-center-y">
+				<span>符合投放：</span>
+				<n-select
+					v-model:value="filters.isPlace"
+					:options="[
+						{ label: '符合', value: 1 },
+						{ label: '不符合', value: 0 },
+					]"
+					size="small"
+					placeholder="选择是否符合投放"
+					clearable
+					style="width: 90px"
+					@update:value="() => getChannelListFn(1)" />
+			</div>
 
-			<n-checkbox
-				v-model:checked="filters.hasOrders"
-				label="已出单"
-				:checked-value="1"
-				:unchecked-value="null"
-				@update:checked="() => getChannelListFn(1)" />
+			<div class="flex flex-center-y">
+				<span>已投放：</span>
+				<n-select
+					v-model:value="filters.isAdvertised"
+					:options="[
+						{ label: '是', value: 1 },
+						{ label: '否', value: 0 },
+					]"
+					size="small"
+					placeholder="选择是否已投放"
+					clearable
+					style="width: 90px"
+					@update:value="() => getChannelListFn(1)" />
+			</div>
+
+			<div class="flex flex-center-y">
+				<span>已出单：</span>
+				<n-select
+					v-model:value="filters.hasOrders"
+					:options="[
+						{ label: '是', value: 1 },
+						{ label: '否', value: 0 },
+					]"
+					size="small"
+					placeholder="选择是否已出单"
+					clearable
+					style="width: 90px"
+					@update:value="() => getChannelListFn(1)" />
+			</div>
 
 			<n-button size="small" @click="() => getChannelListFn(1)" type="primary">搜索</n-button>
 			<n-button size="small" @click="resetFilters">重置</n-button>
@@ -97,7 +139,7 @@
 			:pagination="pagination"
 			:loading="loading"
 			:remote="true"
-			max-height="calc(100vh - 49px - 40px - 35px)"
+			max-height="calc(100vh - 49px - 40px - 40px - 35px)"
 			:row-key="(row) => row.shortId"
 			@update:sorter="handleSort" />
 	</div>
@@ -138,13 +180,15 @@ const tableDataCopy = ref([]);
 const total = ref(0);
 const loading = ref(false);
 const filters = reactive({
+	shortId: '', // 频道shortId搜索
 	title: '', // 频道标题模糊搜索
 	url: '', // 用户名模糊搜索
 	sourceType: null, // TG类型
 	typeId: null, // 行业类型ID
 	grade: null, // 等级筛选
+	isPlace: null, // 是否符合投放
 	isAdvertised: null, // 未推广
-	hasOrders: null, // 未推广
+	hasOrders: null, // 是否出单
 });
 const pagination = reactive({
 	page: 1,
@@ -268,6 +312,27 @@ const columns = ref([
 		},
 	},
 	{
+		title: '符合投放',
+		key: 'isPlace',
+		width: 70,
+		align: 'center',
+		render(row, index) {
+			return h(ShowOrEdit, {
+				editType: 'select',
+				value: row.isPlace,
+				options: [
+					{ label: '是', value: 1 },
+					{ label: '否', value: 0 },
+				],
+				style: { width: '60px', minHeight: '22px' },
+				onUpdateValue: (v) => {
+					tableData.value[index].isPlace = v;
+					onEditRow(tableData.value[index]);
+				},
+			});
+		},
+	},
+	{
 		title: '已投放',
 		key: 'isAdvertised',
 		width: 60,
@@ -368,11 +433,13 @@ const getChannelListFn = async (page) => {
 
 // 重置过滤条件
 const resetFilters = () => {
+	filters.shortId = ''; // shortId
 	filters.title = ''; // 频道标题模糊搜索
 	filters.url = ''; // 用户名模糊搜索
 	filters.sourceType = null; // TG类型
 	filters.typeId = null; // 行业类型ID
 	filters.grade = null; // 等级筛选
+	filters.isPlace = null; // 是否符合投放
 	filters.isAdvertised = null; // 未推广
 	filters.hasOrders = null; // 未推广
 

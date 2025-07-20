@@ -80,6 +80,7 @@ export const getChannelList = async (ctx) => {
 		title,
 		description,
 		sourceType,
+		isPlace,
 		isAdvertised,
 		hasOrders,
 		url,
@@ -103,6 +104,10 @@ export const getChannelList = async (ctx) => {
 
 	if (sourceType) {
 		query.sourceType = sourceType;
+	}
+
+	if (isPlace !== undefined) {
+		query.isPlace = Number(isPlace);
 	}
 
 	if (isAdvertised !== undefined) {
@@ -172,6 +177,7 @@ export const batchUpdateChannel = async (ctx) => {
 				typeId,
 				sourceType,
 				grade,
+				isPlace,
 				isAdvertised,
 				hasOrders,
 			} = channelData;
@@ -181,15 +187,37 @@ export const batchUpdateChannel = async (ctx) => {
 
 			if (channel) {
 				// 只在频道存在时进行更新
-				channel.title = title;
-				channel.description = description;
-				channel.subscribers = subscribers;
-				channel.url = url;
-				channel.typeId = typeId;
-				channel.sourceType = sourceType;
-				channel.grade = grade;
-				channel.isAdvertised = isAdvertised;
-				channel.hasOrders = hasOrders;
+				if (title) {
+					channel.title = title;
+				}
+				if (description) {
+					channel.description = description;
+				}
+				if (subscribers) {
+					channel.subscribers = subscribers;
+				}
+				if (url) {
+					channel.url = url;
+				}
+				if (typeId) {
+					channel.typeId = typeId;
+				}
+				if (sourceType) {
+					channel.sourceType = sourceType;
+				}
+				if (grade) {
+					channel.grade = grade;
+				}
+				if (isPlace !== undefined) {
+					channel.isPlace = isPlace;
+				}
+				if (isAdvertised !== undefined) {
+					channel.isAdvertised = isAdvertised;
+				}
+				if (hasOrders !== undefined) {
+					channel.hasOrders = hasOrders;
+				}
+
 				channel.updatedAt = new Date(); // 更新修改时间
 
 				await channel.save(); // 保存更新

@@ -43,6 +43,9 @@ const channelSchema = new mongoose.Schema({
 		enum: ['A+', 'A', 'B+', 'B', 'C+', 'C', 'D+', 'D'],
 	},
 
+	// 是否符合投放
+	isPlace: { type: Number, default: null, enum: [0, 1] },
+
 	// 是否投放
 	isAdvertised: { type: Number, default: 0, enum: [0, 1] },
 

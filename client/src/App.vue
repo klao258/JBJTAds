@@ -22,6 +22,9 @@ const themeOverrides = {
 .flex {
 	display: flex;
 }
+.flex-wrap {
+	flex-wrap: wrap;
+}
 .flex-v {
 	flex-direction: column;
 }
