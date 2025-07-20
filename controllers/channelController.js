@@ -119,7 +119,8 @@ export const getChannelList = async (ctx) => {
 	}
 
 	if (url) {
-		query.url = { $regex: url, $options: 'i' }; // 模糊查询
+		const username = url?.replace(/@/, '');
+		query.url = { $regex: username, $options: 'i' }; // 模糊查询
 	}
 
 	if (grade) {
