@@ -410,11 +410,13 @@ const getChannelListFn = async (page) => {
 			page: pagination.page,
 			pageSize: pagination.pageSize,
 		};
+		if (filters.shortId) params.shortId = filters.shortId;
 		if (filters.title) params.title = filters.title;
 		if (filters.url) params.url = filters.url;
 		if (filters.sourceType) params.sourceType = filters.sourceType;
 		if (filters.typeId) params.typeId = filters.typeId;
 		if (filters.grade) params.grade = filters.grade;
+		if (filters.isPlace) params.isPlace = filters.isPlace;
 		if (filters.isAdvertised !== null) params.isAdvertised = filters.isAdvertised;
 		if (filters.hasOrders !== null) params.hasOrders = filters.hasOrders;
 
