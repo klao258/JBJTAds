@@ -23,3 +23,6 @@ export const batchAddChannels = (data) => post('/api/channel//batchAdd', data);
 
 // 批量编辑频道
 export const batchUpdateChannels = (data) => post('/api/channel/batchUpdate', data);
+
+// 删除
+export const delChannel = (data) => post('/api/channel/del', data);

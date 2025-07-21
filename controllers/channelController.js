@@ -239,3 +239,34 @@ export const batchUpdateChannel = async (ctx) => {
 		};
 	}
 };
+
+// 删除帖子
+export const delChannel = async (ctx) => {
+	const { shortId } = ctx.request.body; // 获取请求体中的频道数组
+
+	if (!shortId) {
+		ctx.body = {
+			code: 1,
+			message: 'shortId为空',
+		};
+		return;
+	}
+	try {
+		const result = await Channel.deleteOne({ shortId });
+
+		if (result.deletedCount === 0) {
+			ctx.body = {
+				code: 1,
+				message: '删除失败!',
+			};
+		} else {
+			ctx.body = {
+				code: 0,
+				message: '删除成功!',
+			};
+		}
+	} catch (err) {
+		ctx.status = 500;
+		ctx.body = { message: '服务器错误', error: err.message };
+	}
+};

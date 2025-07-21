@@ -19,9 +19,12 @@ const message = useMessage();
 
 const copyText = async () => {
 	try {
+		document.body.focus();
+		console.log('页面聚焦成功！');
 		await navigator.clipboard.writeText(props.text);
 		message.success('复制成功');
-	} catch {
+	} catch (e) {
+		console.log(e);
 		message.error('复制失败，请手动复制');
 	}
 };

@@ -154,11 +154,12 @@
 </template>
 
 <script setup>
-import { NInput, NSelect } from 'naive-ui';
+import { NInput, NSelect, NButton } from 'naive-ui';
 import AddChannel from '@/components/AddChannel.vue';
 import AddChannelModel from '@/components/AddChannelModel.vue';
 import ShowOrEdit from '@/components/ShowOrEdit.js';
-import { getChannelType, getChannelList, batchUpdateChannels } from '@/api';
+import DelBtn from '@/components/DelBtn.vue';
+import { getChannelType, getChannelList, batchUpdateChannels, delChannel } from '@/api';
 import CopyText from '@/components/CopyText.vue';
 import { useMessage } from 'naive-ui';
 
@@ -223,6 +224,17 @@ const pagination = reactive({
 // 列配置
 const columns = ref([
 	{ title: '#', key: 'id', align: 'center', width: 35, render: (row, index) => index + 1 },
+	{
+		title: '#',
+		key: 'del',
+		width: 50,
+		align: 'center',
+		render(row) {
+			return h(DelBtn, {
+				onConfirm: () => onDelChannel(row),
+			});
+		},
+	},
 	{
 		title: '频道ID',
 		key: 'shortId',
@@ -511,5 +523,11 @@ const handleSort = (sorter) => {
 const onEditRow = async (row) => {
 	const res = await batchUpdateChannels([row]);
 	message.success('更新成功！');
+};
+
+// 删除频道
+const onDelChannel = async (row) => {
+	const res = await delChannel({ shortId: row.shortId });
+	message.success('删除成功');
 };
 </script>
