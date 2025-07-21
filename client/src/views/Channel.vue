@@ -238,7 +238,7 @@ const columns = ref([
 	{
 		title: '频道ID',
 		key: 'shortId',
-		width: 70,
+		width: 75,
 		render(row) {
 			return h(CopyText, { text: row.shortId });
 		},
@@ -527,7 +527,8 @@ const onEditRow = async (row) => {
 
 // 删除频道
 const onDelChannel = async (row) => {
-	const res = await delChannel({ shortId: row.shortId });
+	await delChannel({ shortId: row.shortId });
 	message.success('删除成功');
+	getChannelListFn();
 };
 </script>
