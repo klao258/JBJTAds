@@ -267,7 +267,24 @@ const columns = ref([
 			});
 		},
 	},
-	{ title: '标题', key: 'title', ellipsis: true, width: 200 },
+	{
+		title: '标题',
+		key: 'title',
+		ellipsis: true,
+		width: 200,
+		render(row) {
+			return h(
+				'a',
+				{
+					href: row.url,
+					target: '_blank',
+					rel: 'noopener noreferrer',
+					style: 'color: #1890ff',
+				},
+				[h(CopyText, { text: row.title })]
+			);
+		},
+	},
 	{
 		title: '订阅数',
 		key: 'subscribers',
