@@ -202,6 +202,18 @@ const addChannelFn = async () => {
 	let table = tableData.value?.filter?.((v) => v?.sourceType && v?.typeId && v?.title && v?.url);
 	if (table.length === 0) return;
 
+	table = table?.map?.((v) => ({
+		sourceType: v.sourceType,
+		typeId: v.typeId,
+		title: v.title,
+		subscribers: v.subscribers || 0,
+		url: v.url?.replace?.(/@/, 'https://t.me/'),
+		grade: v.grade,
+		isAdvertised: 0,
+		hasOrders: 0,
+		description: v.description,
+	}));
+
 	// 这里可以添加逻辑来处理添加频道的操作
 	const res = await batchAddChannels(table);
 
