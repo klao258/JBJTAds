@@ -40,8 +40,8 @@ const channelSchema = new mongoose.Schema({
 	// 评级（A+/A/B+/B/C+/C/D+/D）
 	grade: {
 		type: String,
-		default: null,
-		enum: ['A+', 'A', 'B+', 'B', 'C+', 'C', 'D+', 'D'],
+		default: '',
+		enum: ['A+', 'A', 'B+', 'B', 'C+', 'C', 'D+', 'D', ''],
 	},
 
 	// 是否符合投放
