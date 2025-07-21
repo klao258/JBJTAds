@@ -1,7 +1,7 @@
 <template>
 	<div>
 		<n-upload :on-change="onFileChange" accept=".xlsx, .xls">
-			<n-button type="primary" size="small">添加频道</n-button>
+			<n-button type="primary" size="small">上传频道</n-button>
 		</n-upload>
 
 		<n-modal v-model:show="showModal" title="表格数据" :auto-focus="false" @close="resetData">

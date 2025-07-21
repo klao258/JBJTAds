@@ -125,6 +125,9 @@
 
 			<n-button size="small" @click="() => getChannelListFn(1)" type="primary">搜索</n-button>
 			<n-button size="small" @click="resetFilters">重置</n-button>
+			<n-button size="small" type="primary" @click="addChannelModelRef?.show()">
+				添加频道
+			</n-button>
 			<AddChannel :channelType="channelType" />
 			<n-button size="small" type="primary" @click="copyAllUrls">复制全部链接</n-button>
 		</div>
@@ -142,12 +145,18 @@
 			max-height="calc(100vh - 49px - 40px - 40px - 35px)"
 			:row-key="(row) => row.shortId"
 			@update:sorter="handleSort" />
+
+		<add-channel-model
+			ref="addChannelModelRef"
+			:sourceTypeOptions="sourceTypeOptions"
+			:channelType="channelType" />
 	</div>
 </template>
 
 <script setup>
 import { NInput, NSelect } from 'naive-ui';
 import AddChannel from '@/components/AddChannel.vue';
+import AddChannelModel from '@/components/AddChannelModel.vue';
 import ShowOrEdit from '@/components/ShowOrEdit.js';
 import { getChannelType, getChannelList, batchUpdateChannels } from '@/api';
 import CopyText from '@/components/CopyText.vue';
@@ -174,6 +183,7 @@ const gradeTypes = [
 	{ label: 'D', value: 'D' },
 ];
 
+const addChannelModelRef = ref();
 const channelType = ref([]);
 const tableData = ref([]);
 const tableDataCopy = ref([]);

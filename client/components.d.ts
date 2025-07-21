@@ -9,6 +9,8 @@ export {}
 declare module 'vue' {
   export interface GlobalComponents {
     AddChannel: typeof import('./src/components/AddChannel.vue')['default']
+    AddChannelModel: typeof import('./src/components/AddChannelModel.vue')['default']
+    copy: typeof import('./src/components/AddChannel copy.vue')['default']
     CopyText: typeof import('./src/components/CopyText.vue')['default']
     Form: typeof import('./src/components/Form.vue')['default']
     Layout: typeof import('./src/components/Layout.vue')['default']
