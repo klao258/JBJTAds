@@ -15,7 +15,20 @@ const app = new Koa();
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
-app.use(cors()); // 允许所有来源跨域
+app.use(
+	cors({
+		origin: (ctx) => {
+			// 允许来自 Telegram Ads 的请求
+			if (ctx.request.header.origin === 'https://ads.telegram.org') {
+				return 'https://ads.telegram.org';
+			}
+			return '*'; // 或设置为特定域名
+		},
+		credentials: true,
+		allowMethods: ['GET', 'POST', 'OPTIONS'],
+		allowHeaders: ['Content-Type', 'Authorization'],
+	})
+);
 
 app.use(async (ctx, next) => {
 	const { method, path, ip, headers } = ctx;
