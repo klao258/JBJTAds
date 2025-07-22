@@ -1,6 +1,6 @@
 import 'dotenv/config'; // 或 import dotenv from 'dotenv'; dotenv.config();
 import Koa from 'koa';
-// import cors from '@koa/cors'
+import cors from '@koa/cors';
 import bodyParser from 'koa-bodyparser';
 import userRoutes from './routes/user.js';
 import adsRoutes from './routes/ads.js';
