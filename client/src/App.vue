@@ -67,7 +67,7 @@ const themeOverrides = {
 	padding: 4px;
 }
 /* 仅允许 url 列文本可选 */
-.n-data-table td:nth-child(7) {
+.n-data-table td:nth-child(8) {
 	user-select: text;
 }
 .n-data-table .n-data-table__pagination {
