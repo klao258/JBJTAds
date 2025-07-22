@@ -16,16 +16,6 @@ const app = new Koa();
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
 // app.use(cors()); // 允许所有来源跨域
-app.use(
-	cors({
-		origin: (ctx) => {
-			return '*'; // 或返回 ctx.request.header.origin
-		},
-		credentials: true, // 允许携带 cookie
-		allowMethods: ['GET', 'POST', 'OPTIONS'],
-		allowHeaders: ['Content-Type', 'Authorization', 'Accept'],
-	})
-);
 
 app.use(async (ctx, next) => {
 	const { method, path, ip, headers } = ctx;
