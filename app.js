@@ -15,7 +15,7 @@ const app = new Koa();
 
 const __dirname = path.dirname(new URL(import.meta.url).pathname);
 
-// app.use(cors()); // 允许所有来源跨域
+app.use(cors()); // 允许所有来源跨域
 
 app.use(async (ctx, next) => {
 	const { method, path, ip, headers } = ctx;
