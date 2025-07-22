@@ -85,9 +85,11 @@ export default defineComponent({
 									handleChange();
 								},
 						  })
-						: props.options
+						: props.options.find((item) => item.value === props.value)
+						? props.options
 								.find((item) => item.value === props.value)
 								?.label?.replace(/否/, '')
+						: '-'
 				);
 			}
 		};
