@@ -19,7 +19,7 @@ export const getChannelType = () => get('/api/channel/types');
 export const getChannelList = (p) => get('/api/channel/list', p);
 
 // 批量添加频道
-export const batchAddChannels = (data) => post('/api/channel//batchAdd', data);
+export const batchAddChannels = (data) => post('/api/channel/batchAdd', data);
 
 // 批量编辑频道
 export const batchUpdateChannels = (data) => post('/api/channel/batchUpdate', data);
