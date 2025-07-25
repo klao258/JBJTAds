@@ -241,7 +241,7 @@ const columns = ref([
 		width: 75,
 		render(row) {
 			return h(CopyText, {
-				text: `https://t.me/tsyx?start=68661_ADS-TS-${guid()}${row.shortId}`,
+				text: `https://t.me/tsyx?start=68661_ADS-TS-${row.shortId}${guid()}`,
 			});
 		},
 	},
