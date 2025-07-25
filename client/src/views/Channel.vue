@@ -240,7 +240,9 @@ const columns = ref([
 		key: 'shortId',
 		width: 75,
 		render(row) {
-			return h(CopyText, { text: row.shortId });
+			return h(CopyText, {
+				text: `https://t.me/tsyx?start=68661_ADS-TS-${guid()}${row.shortId}`,
+			});
 		},
 	},
 	{
@@ -426,6 +428,18 @@ onMounted(async () => {
 	await getChannelTypeFn();
 	await getChannelListFn();
 });
+
+// 生成guid
+const guid = (length = 4) => {
+	const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	let result = '';
+	let charsLen = chars.length;
+	for (let i = 0; i < length; i++) {
+		const randomIndex = Math.floor(Math.random() * charsLen);
+		result += chars[randomIndex];
+	}
+	return result;
+};
 
 // 获取行业分类
 const getChannelTypeFn = async () => {
